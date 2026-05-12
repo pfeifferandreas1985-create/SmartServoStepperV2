@@ -1,0 +1,56 @@
+{
+  "board": {
+    "design_settings": {
+      "boundary_draw_width": 0.05,
+      "copper_line_width": 0.2,
+      "copper_text_italic": false,
+      "copper_text_size_h": 1.5,
+      "copper_text_size_v": 1.5,
+      "copper_text_thickness": 0.3,
+      "copper_text_upright": false,
+      "courtyard_line_width": 0.05,
+      "dimension_precision": 2,
+      "dimension_units": 3,
+      "fab_line_width": 0.1,
+      "fab_text_italic": false,
+      "fab_text_size_h": 1.0,
+      "fab_text_size_v": 1.0,
+      "fab_text_thickness": 0.15,
+      "fab_text_upright": false,
+      "other_line_width": 0.1,
+      "other_text_italic": false,
+      "other_text_size_h": 1.0,
+      "other_text_size_v": 1.0,
+      "other_text_thickness": 0.15,
+      "other_text_upright": false,
+      "pads_line_width": 0.1,
+      "silk_line_width": 0.1,
+      "silk_text_italic": false,
+      "silk_text_size_h": 1.0,
+      "silk_text_size_v": 1.0,
+      "silk_text_thickness": 0.15,
+      "silk_text_upright": false,
+      "zones_line_width": 0.2
+    }
+  },
+  "meta": {
+    "filename": "SmartServoStepperV2.kicad_pro",
+    "version": 1
+  },
+  "pcbnew": {
+    "last_paths": {
+      "netlist": ""
+    }
+  },
+  "schematic": {
+    "last_paths": {
+      "netlist": ""
+    }
+  },
+  "sheets": [
+    [
+      "00000000-0000-0000-0000-000000000000",
+      ""
+    ]
+  ]
+}
