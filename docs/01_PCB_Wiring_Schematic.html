@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Servo Stepper V2 - PCB Wiring & Schematic Master</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'dark',
+            securityLevel: 'loose',
+            fontFamily: 'Inter'
+        });
+    </script>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --accent-color: #38bdf8;
+            --text-color: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(56, 189, 248, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(56, 189, 248, 0.05) 0%, transparent 40%);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.intro {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        section {
+            margin-bottom: 4rem;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            padding: 2rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        h2::before {
+            content: '';
+            display: block;
+            width: 4px;
+            height: 1.5rem;
+            background: var(--accent-color);
+            border-radius: 2px;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            margin: 1.5rem 0 1rem 0;
+            color: var(--text-color);
+            opacity: 0.9;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        th {
+            text-align: left;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--accent-color);
+            font-weight: 600;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-color);
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--accent-color);
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.3rem;
+            font-size: 0.9rem;
+        }
+
+        .note {
+            background: rgba(245, 158, 11, 0.1);
+            border-left: 4px solid #f59e0b;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 0.5rem;
+            font-style: italic;
+            color: #fbbf24;
+        }
+
+        .mermaid {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+            border-radius: 1rem;
+            margin-top: 1rem;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 4rem;
+            padding-bottom: 2rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            section { padding: 1.5rem; }
+            h1 { font-size: 2rem; }
+            table { display: block; overflow-x: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Smart Servo Stepper V2</h1>
+        <p class="intro">PCB Wiring & Schematic Master Plan</p>
+        <p style="margin-top: 0.5rem; color: var(--text-muted);">Dieses Dokument dient als Master-Bauplan für die Hardware-Entwicklung.</p>
+    </header>
+
+    <section id="bom">
+        <h2>1. System-Komponenten (BOM)</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Typ</th>
+                    <th>Bauteil / Modul</th>
+                    <th>Menge</th>
+                    <th>Funktion</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>MCU</strong></td>
+                    <td>ESP32-C3 Super Mini</td>
+                    <td>1x</td>
+                    <td>Hauptprozessor (Single-Core, 160MHz, WLAN).</td>
+                </tr>
+                <tr>
+                    <td><strong>Driver</strong></td>
+                    <td>TMC2209 Stepper Driver</td>
+                    <td>1x</td>
+                    <td>Ultra-leiser Schrittmotortreiber, konfiguriert via UART.</td>
+                </tr>
+                <tr>
+                    <td><strong>Sensor</strong></td>
+                    <td>AS5600 Magnetic Encoder</td>
+                    <td>1x</td>
+                    <td>12-Bit Absolut-Encoder (I²C) zur Positionserfassung.</td>
+                </tr>
+                <tr>
+                    <td><strong>Comms</strong></td>
+                    <td>BSS138 Dual Level Shifter</td>
+                    <td>1x</td>
+                    <td>Konvertiert 3.3V UART zu 5V für den Feetech Bus.</td>
+                </tr>
+                <tr>
+                    <td><strong>Power</strong></td>
+                    <td>5V DC/DC Step-Down (Buck)</td>
+                    <td>1x</td>
+                    <td>Wandelt 12V in saubere 5V für ESP und Level Shifter um.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>1.1 Passiv-Bauteile (Protection & Hardening)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Bauteil</th>
+                    <th>Position</th>
+                    <th>Zweck</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>C1</strong></td>
+                    <td>100µF bis 470µF (Elko)</td>
+                    <td>parallel zu <code>VMOT</code> / <code>GND</code></td>
+                    <td>Fängt Spannungsspitzen ab, schützt TMC2209 vor dem Durchbrennen.</td>
+                </tr>
+                <tr>
+                    <td><strong>C2</strong></td>
+                    <td>100nF (Keramik)</td>
+                    <td>parallel zu <code>VMOT</code> / <code>GND</code></td>
+                    <td>Hochfrequenz-Filterung für Motoreingang.</td>
+                </tr>
+                <tr>
+                    <td><strong>C3</strong></td>
+                    <td>100nF (Keramik)</td>
+                    <td>ESP32-C3 <code>3.3V</code> / <code>GND</code></td>
+                    <td>Entkopplung für die Logik (nahe am ESP-Pin platzieren).</td>
+                </tr>
+                <tr>
+                    <td><strong>C4</strong></td>
+                    <td>100nF (Keramik)</td>
+                    <td>TMC2209 <code>VDD</code> / <code>GND</code></td>
+                    <td>Entkopplung für die Treiber-Logik (nahe am VDD-Pin).</td>
+                </tr>
+                <tr>
+                    <td><strong>R1, R2</strong></td>
+                    <td>4.7 kΩ Widerstand</td>
+                    <td><code>SDA</code> &rarr; <code>3.3V</code> / <code>SCL</code> &rarr; <code>3.3V</code></td>
+                    <td>Starke I²C Pull-Ups für schnelle 400kHz Taktung zum AS5600.</td>
+                </tr>
+                <tr>
+                    <td><strong>R3</strong></td>
+                    <td>10 kΩ Widerstand</td>
+                    <td>ESP32 <code>GPIO 3 (EN)</code> &rarr; <code>3.3V</code></td>
+                    <td>Boot-Safe Pull-Up: Hält den Motor beim Booten zwingend ausgeschaltet.</td>
+                </tr>
+                <tr>
+                    <td><strong>R4</strong></td>
+                    <td>220 Ω Widerstand</td>
+                    <td>Level-Shifter 5V RX &rarr; Bus</td>
+                    <td>Kurzschlussschutz-Widerstand für die Feetech-Signalleitung.</td>
+                </tr>
+                <tr>
+                    <td><strong>R5</strong></td>
+                    <td>1 kΩ Widerstand</td>
+                    <td>ESP32 <code>GPIO 6</code> &rarr; TMC <code>UART</code></td>
+                    <td>Begrenzt Stromspitzen auf der Treiber-UART-Datenleitung.</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section id="netlist">
+        <h2>2. Master Verdrahtungstabelle</h2>
+        
+        <h3>2.1 Power Routing (Netzversorgung)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Signal-Netz</th>
+                    <th>Ursprung</th>
+                    <th>Verbinden mit (Ziel-Pins)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>12V_VMOT</strong></td>
+                    <td>12V DC Input (+)</td>
+                    <td>Step-Down (+), TMC2209 <code>VMOT</code>, Elko <code>C1</code> (+), Kerko <code>C2</code></td>
+                </tr>
+                <tr>
+                    <td><strong>GND</strong></td>
+                    <td>12V DC Input (-)</td>
+                    <td>Alle GND-Pins: Step-Down, ESP32, TMC2209, AS5600, Level-Shifter, C1-C4</td>
+                </tr>
+                <tr>
+                    <td><strong>5V_SYS</strong></td>
+                    <td>Step-Down Out (+)</td>
+                    <td>ESP32 <code>5V</code> (VBUS), Level-Shifter <code>HV</code></td>
+                </tr>
+                <tr>
+                    <td><strong>3.3V_LOG</strong></td>
+                    <td>ESP32 <code>3.3V</code> Out</td>
+                    <td>TMC2209 <code>VDD</code>, AS5600 <code>VCC</code>, Level-Shifter <code>LV</code>, R1-R3, C3, C4</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="note">
+            Wichtig: Die Masse-Leitung (GND) vom 12V Input bis zum TMC2209 sollte als dicke Polygon-Fläche (GND Plane) ausgeführt werden.
+        </div>
+
+        <h3>2.2 Signal Routing (Logik-Verdrahtung)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Signal-Name</th>
+                    <th>ESP32-C3 Pin</th>
+                    <th>Ziel-Modul</th>
+                    <th>Ziel-Pin</th>
+                    <th>Pfad & Bauteile</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>I2C_SDA</strong></td>
+                    <td><code>GPIO 4</code></td>
+                    <td>AS5600</td>
+                    <td><code>SDA</code></td>
+                    <td>Direkt zu AS5600. Knoten an <code>R1</code> (Pullup).</td>
+                </tr>
+                <tr>
+                    <td><strong>I2C_SCL</strong></td>
+                    <td><code>GPIO 5</code></td>
+                    <td>AS5600</td>
+                    <td><code>SCL</code></td>
+                    <td>Direkt zu AS5600. Knoten an <code>R2</code> (Pullup).</td>
+                </tr>
+                <tr>
+                    <td><strong>MOT_STEP</strong></td>
+                    <td><code>GPIO 0</code></td>
+                    <td>TMC2209</td>
+                    <td><code>STEP</code></td>
+                    <td>Direkt verbinden.</td>
+                </tr>
+                <tr>
+                    <td><strong>MOT_DIR</strong></td>
+                    <td><code>GPIO 1</code></td>
+                    <td>TMC2209</td>
+                    <td><code>DIR</code></td>
+                    <td>Direkt verbinden.</td>
+                </tr>
+                <tr>
+                    <td><strong>MOT_EN</strong></td>
+                    <td><code>GPIO 3</code></td>
+                    <td>TMC2209</td>
+                    <td><code>EN</code></td>
+                    <td>Knoten an <code>R3</code> (Pullup).</td>
+                </tr>
+                <tr>
+                    <td><strong>TMC_UART</strong></td>
+                    <td><code>GPIO 6</code></td>
+                    <td>TMC2209</td>
+                    <td><code>UART</code></td>
+                    <td>Über <code>R5</code> (1 kΩ) Serienwiderstand.</td>
+                </tr>
+                <tr>
+                    <td><strong>FT_TX</strong></td>
+                    <td><code>GPIO 21</code></td>
+                    <td>Level-Shifter</td>
+                    <td><code>LV1</code></td>
+                    <td>Zu Low-Voltage Side 1.</td>
+                </tr>
+                <tr>
+                    <td><strong>FT_RX</strong></td>
+                    <td><code>GPIO 20</code></td>
+                    <td>Level-Shifter</td>
+                    <td><code>LV2</code></td>
+                    <td>Zu Low-Voltage Side 2.</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section id="diagram">
+        <h2>3. Architektur Diagramm (Signalfluss)</h2>
+        <div class="mermaid">
+            graph TD
+                %% Power Traces
+                POWER_IN((12V Input)) -->|12V_VMOT| BUCK[5V Step-Down]
+                POWER_IN -->|12V_VMOT| CAP[C1 100µF + C2 100nF]
+                CAP -->|Protected 12V| TMC[TMC2209]
+                BUCK -->|5V_SYS| ESP[ESP32-C3]
+                BUCK -->|5V_SYS| SHIFT_H[Level Shifter HV]
+                ESP -->|3.3V_LOG| SHIFT_L[Level Shifter LV]
+                ESP -->|3.3V_LOG| AS56[AS5600]
+                ESP -->|3.3V_LOG| TMC_LOGIC[TMC2209 VDD]
+
+                %% I2C Traces
+                ESP_I2C[ESP GPIO 4 & 5] -->|I2C_SDA / I2C_SCL| AS56_SIG[AS5600 Signals]
+                3.3V_LOG -.->|R1 / R2 Pullup| ESP_I2C
+                
+                %% Stepper Traces
+                ESP_STEP[ESP GPIO 0, 1] -->|MOT_STEP / MOT_DIR| TMC_SIG[TMC2209 STEP/DIR]
+                ESP_EN[ESP GPIO 3] -->|MOT_EN| TMC_EN[TMC2209 EN]
+                3.3V_LOG -.->|R3 Pullup| ESP_EN
+                
+                %% TMC UART
+                ESP_UART[ESP GPIO 6] -->|TMC_UART via R5| TMC_UART_PIN[TMC2209 UART]
+                
+                %% Feetech Bus Traces
+                ESP_FT[ESP GPIO 20, 21] -->|FT_RX / FT_TX| SHIFT_L
+                SHIFT_H -->|5V Data Logic| JOIN_RESISTOR[R4 220 Ohm]
+                JOIN_RESISTOR --> FEETECH_DATA((FEETECH DATA PIN))
+        </div>
+    </section>
+
+    <footer>
+        &copy; 2026 Smart Servo Stepper Project | Erstellt von Antigravity AI
+    </footer>
+
+</body>
+</html>
