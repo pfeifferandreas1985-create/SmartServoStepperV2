@@ -11,3 +11,23 @@ Ein ESP32-C3-basiertes Closed-Loop-Servosystem. Der ESP32 kompensiert die Einsch
 
 Die vollständigen Schaltpläne, BOM und Verdrahtungstabellen für die Platinenfertigung findest du im Ordner `docs`.
 - [01_PCB_Wiring_Schematic.md](./docs/01_PCB_Wiring_Schematic.md) - Der komplette Blueprint zur Platinenerstellung.
+
+## 🚀 Software (Firmware)
+
+Die Firmware befindet sich im Ordner `software/SmartServoStepperV2`. 
+- **Plattform:** Arduino IDE (ESP32 Core)
+- **Features:** 
+  - AS5600 Encoder-Anbindung (I2C)
+  - TMC2209 Konfiguration & Steuerung (UART)
+  - Feetech Servo Protokoll Emulation
+  - Closed-Loop PID Regelung
+
+**Installation:**
+1. Installiere den [ESP32 Core](https://github.com/espressif/arduino-esp32) in der Arduino IDE.
+2. Installiere die Bibliotheken: `TMCStepper`, `AS5600`, `PID`.
+3. Öffne `SmartServoStepperV2.ino` und lade es auf den ESP32-C3 Super Mini hoch.
+
+## 🛠 Hardware
+
+Das KiCad-Projekt befindet sich im Ordner `hardware/SmartServoStepperV2`.
+- Nutze die [01_PCB_Wiring_Schematic.md](./docs/01_PCB_Wiring_Schematic.md) als Referenz für die Verdrahtung.
