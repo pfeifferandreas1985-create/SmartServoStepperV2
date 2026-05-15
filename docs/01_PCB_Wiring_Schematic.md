@@ -1,6 +1,6 @@
-# SmartServoStepperV2 – PCB Wiring & Schaltplan (v1.6 Final)
+# SmartServoStepperV2 – PCB Wiring & Schaltplan (v2.0 Verified)
 
-Dieses Dokument ist der **Master-Bauplan** für das PCB-Layout, abgeglichen mit der Hardware-Spezifikation v1.6.
+Dieses Dokument ist der **Master-Bauplan** für das PCB-Layout, abgeglichen mit der Hardware-Spezifikation v2.0 (Stabilisiert & Getestet).
 
 ---
 
@@ -24,17 +24,18 @@ Dieses Dokument ist der **Master-Bauplan** für das PCB-Layout, abgeglichen mit 
 
 | ESP32-C3 Pin | Funktion | Beschreibung | Hardware-Beschaltung |
 | :--- | :--- | :--- | :--- |
+| **GPIO 0** | SDA | I2C Daten (AS5600) | 4.7kΩ Pull-UP gegen 3.3V |
 | **GPIO 1** | Feetech TX | Bus Senden (Half-Duplex) | Via BSS138 Level Shifter (3.3V→5V) |
 | **GPIO 2** | DIAG TMC | StallGuard / Diagnose | 4.7kΩ Pull-UP gegen 3.3V (Open-Drain) |
 | **GPIO 3** | ENABLE | TMC2209 EN (Active LOW) | 10kΩ Pull-UP gegen 3.3V (Boot = AUS) |
-| **GPIO 4** | STEP | Schritt-Impuls | Direkt |
-| **GPIO 5** | DIR | Richtungs-Signal | Direkt |
-| **GPIO 6** | UART TMC | PDN_UART Kommunikation | 1kΩ Schutzwiderstand in Serie |
+| **GPIO 5** | UART RX | TMC2209 Kommunikation | Direkt an PDN_UART (TMC) |
+| **GPIO 6** | UART TX | TMC2209 Kommunikation | **1kΩ Schutzwiderstand** in Serie zu PDN_UART |
 | **GPIO 7** | Feetech RX | Bus Empfangen (Half-Duplex) | Via Spannungsteiler (4.7kΩ Serie + 10kΩ→GND) |
 | **GPIO 8** | Status-LED | On-Board LED (Blau) | Intern (Active LOW) |
-| **GPIO 10** | SDA | I2C Daten (AS5600) | 4.7kΩ Pull-UP gegen 3.3V |
-| **GPIO 20** | SCL | I2C Takt (AS5600) | 4.7kΩ Pull-UP gegen 3.3V |
-| **GPIO 18/19** | USB/JTAG | D- / D+ | **Physisch unbeschaltet lassen!** |
+| **GPIO 9** | SCL | I2C Takt (AS5600) | 4.7kΩ Pull-UP gegen 3.3V |
+| **GPIO 18** | STEP | Schritt-Impuls | Direkt |
+| **GPIO 19** | DIR | Richtungs-Signal | Direkt |
+| **GPIO 20/21** | USB/JTAG | D- / D+ | **Physisch unbeschaltet lassen!** (Intern für USB reserviert) |
 
 ---
 
@@ -69,9 +70,11 @@ GPIO 7 (RX) ←── Spannungsteiler ←──────── 5V Bus ──�
 - **RX-Pfad:** 5V Bus → 4.7kΩ in Serie → GPIO 7 (+ 10kΩ gegen GND = Spannungsteiler 5V→3.3V)
 - **Terminierung:** 2.2kΩ Pull-Up gegen 5V am Bus-Ausgang
 
-### 3.4 TMC2209 UART (Single-Wire)
-- **GPIO 6** → 1kΩ Serienwiderstand → TMC2209 PDN_UART
-- Bidirektionale Kommunikation über eine Leitung (SoftwareSerial, 115200 baud)
+### 3.4 TMC2209 UART (Two-Wire Control)
+- **GPIO 5 (RX)** → Direkt an TMC2209 PDN_UART.
+- **GPIO 6 (TX)** → 1kΩ Serienwiderstand (R5) → TMC2209 PDN_UART.
+- **Pull-Up:** Ein **4.7kΩ Widerstand (R9)** von PDN_UART nach 3.3V ist zwingend erforderlich für Signalintegrität.
+- **Firmware:** SoftwareSerial bei **19200 baud**.
 
 ---
 
@@ -97,14 +100,15 @@ GPIO 7 (RX) ←── Spannungsteiler ←──────── 5V Bus ──�
 | C5 | Elko | 100 µF | ESP32 5V / GND (Bulk) |
 | C6 | Keramik | 22 µF | Buck-Converter Ausgang |
 | C7 | Keramik | 10 µF | AS5600 3.3V / GND |
-| R1 | Widerstand | 4.7 kΩ | SDA (GPIO 10) → 3.3V (I2C Pull-Up) |
-| R2 | Widerstand | 4.7 kΩ | SCL (GPIO 20) → 3.3V (I2C Pull-Up) |
+| R1 | Widerstand | 4.7 kΩ | SDA (GPIO 0) → 3.3V (I2C Pull-Up) |
+| R2 | Widerstand | 4.7 kΩ | SCL (GPIO 9) → 3.3V (I2C Pull-Up) |
 | R3 | Widerstand | 10 kΩ | EN (GPIO 3) → 3.3V (Boot-Safe) |
 | R4 | Widerstand | 4.7 kΩ | DIAG (GPIO 2) → 3.3V (Open-Drain Pull-Up) |
-| R5 | Widerstand | 1 kΩ | GPIO 6 → TMC PDN_UART (Schutz) |
+| R5 | Widerstand | 1 kΩ | GPIO 6 (TX) → TMC PDN_UART (Schutz) |
 | R6 | Widerstand | 4.7 kΩ | Feetech RX Spannungsteiler (Serie) |
 | R7 | Widerstand | 10 kΩ | Feetech RX Spannungsteiler (→GND) |
 | R8 | Widerstand | 2.2 kΩ | Feetech Bus Terminierung (→5V) |
+| R9 | Widerstand | 4.7 kΩ | PDN_UART → 3.3V (Kommunikations-Pull-Up) |
 
 ---
 
@@ -136,17 +140,19 @@ graph TD
     ESP -->|3.3V| C_AS[10µF → AS5600]
 
     %% I2C
-    ESP_I2C["GPIO 10 (SDA) + GPIO 20 (SCL)"] -->|I2C 400kHz| AS5600
+    ESP_I2C["GPIO 0 (SDA) + GPIO 9 (SCL)"] -->|I2C 400kHz| AS5600
     3V3[3.3V] -.->|R1/R2 4.7kΩ| ESP_I2C
 
     %% TMC Control
-    ESP4["GPIO 4"] -->|STEP| TMC_STEP[TMC2209]
-    ESP5["GPIO 5"] -->|DIR| TMC_DIR[TMC2209]
+    ESP18["GPIO 18"] -->|STEP| TMC_STEP[TMC2209]
+    ESP19["GPIO 19"] -->|DIR| TMC_DIR[TMC2209]
     ESP3["GPIO 3"] -->|EN| TMC_EN[TMC2209]
     3V3 -.->|R3 10kΩ| ESP3
 
-    %% TMC UART
-    ESP6["GPIO 6"] -->|R5 1kΩ| TMC_UART["TMC2209 PDN_UART"]
+    %% TMC UART (Two-Wire Strategy)
+    ESP5["GPIO 5 (RX)"] --> TMC_UART["TMC2209 PDN_UART"]
+    ESP6["GPIO 6 (TX)"] -->|R5 1kΩ| TMC_UART
+    3V3 -.->|R9 4.7kΩ| TMC_UART
 
     %% TMC DIAG
     TMC_DIAG["TMC2209 DIAG"] -->|R4 4.7kΩ→3.3V| ESP2["GPIO 2 (IRQ)"]
