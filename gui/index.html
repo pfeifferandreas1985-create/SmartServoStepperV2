@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartServoStepper V2 – Dashboard</title>
+    <meta name="description" content="Control Dashboard für SmartServoStepperV2 mit TMC2209, AS5600, ESP32-C3">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ═══ HEADER ═══ -->
+    <header id="app-header">
+        <div class="header-left">
+            <div class="logo-mark">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                    <circle cx="16" cy="16" r="14" stroke="url(#g1)" stroke-width="2.5"/>
+                    <circle cx="16" cy="16" r="7" stroke="url(#g1)" stroke-width="2"/>
+                    <circle cx="16" cy="16" r="3" fill="var(--accent)"/>
+                    <line x1="16" y1="2" x2="16" y2="9" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/>
+                    <line x1="16" y1="23" x2="16" y2="30" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/>
+                    <line x1="2" y1="16" x2="9" y2="16" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/>
+                    <line x1="23" y1="16" x2="30" y2="16" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/>
+                    <defs><linearGradient id="g1" x1="0" y1="0" x2="32" y2="32"><stop stop-color="#06b6d4"/><stop offset="1" stop-color="#3b82f6"/></linearGradient></defs>
+                </svg>
+            </div>
+            <div>
+                <h1>SmartServo Stepper <span class="v2-badge">V2</span></h1>
+                <p class="subtitle">TMC2209 · AS5600 · ESP32-C3 Super Mini</p>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="conn-indicator" id="conn-indicator">
+                <div class="conn-dot" id="conn-dot"></div>
+                <span id="conn-text">Verbinde...</span>
+            </div>
+            <div class="ip-config">
+                <input type="text" id="ip-input" value="192.168.178.85" placeholder="ESP32 IP">
+                <button id="btn-connect" onclick="connectWS()">⟳</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ═══ MAIN GRID ═══ -->
+    <main class="dashboard-grid">
+
+        <!-- ── TELEMETRIE CARD ── -->
+        <section class="card card-telemetry" id="card-telemetry">
+            <div class="card-header">
+                <h2>📡 Live Telemetrie</h2>
+                <div class="card-badge">100 Hz</div>
+            </div>
+            <div class="gauges-row">
+                <div class="gauge-item">
+                    <div class="gauge-ring">
+                        <svg viewBox="0 0 120 120">
+                            <circle cx="60" cy="60" r="52" class="gauge-bg"/>
+                            <circle cx="60" cy="60" r="52" class="gauge-fill" id="gauge-pos-ring"
+                                    stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
+                        </svg>
+                        <div class="gauge-center">
+                            <span class="gauge-value" id="val-angle">0</span>
+                            <span class="gauge-unit">°</span>
+                        </div>
+                    </div>
+                    <span class="gauge-label">ENCODER WINKEL</span>
+                </div>
+                <div class="gauge-item">
+                    <div class="gauge-ring">
+                        <svg viewBox="0 0 120 120">
+                            <circle cx="60" cy="60" r="52" class="gauge-bg"/>
+                            <circle cx="60" cy="60" r="52" class="gauge-fill gauge-fill-green" id="gauge-rps-ring"
+                                    stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
+                        </svg>
+                        <div class="gauge-center">
+                            <span class="gauge-value" id="val-rps">0.0</span>
+                            <span class="gauge-unit">U/s</span>
+                        </div>
+                    </div>
+                    <span class="gauge-label">DREHZAHL</span>
+                </div>
+                <div class="gauge-item">
+                    <div class="gauge-ring">
+                        <svg viewBox="0 0 120 120">
+                            <circle cx="60" cy="60" r="52" class="gauge-bg"/>
+                            <circle cx="60" cy="60" r="52" class="gauge-fill gauge-fill-amber" id="gauge-raw-ring"
+                                    stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
+                        </svg>
+                        <div class="gauge-center">
+                            <span class="gauge-value" id="val-raw">0</span>
+                            <span class="gauge-unit">raw</span>
+                        </div>
+                    </div>
+                    <span class="gauge-label">AS5600 RAW</span>
+                </div>
+            </div>
+            <div class="telemetry-bar">
+                <div class="tele-item"><span class="tele-label">PID Output</span><span class="tele-value" id="val-pid">0</span></div>
+                <div class="tele-item"><span class="tele-label">Setpoint</span><span class="tele-value" id="val-setpoint">2048</span></div>
+                <div class="tele-item"><span class="tele-label">Error</span><span class="tele-value" id="val-error">0</span></div>
+                <div class="tele-item"><span class="tele-label">TMC Status</span><span class="tele-value tele-ok" id="val-tmc">OK</span></div>
+            </div>
+        </section>
+
+        <!-- ── CONTROL CARD ── -->
+        <section class="card card-control" id="card-control">
+            <div class="card-header">
+                <h2>🎮 Steuerung</h2>
+            </div>
+
+            <!-- Mode Toggle -->
+            <div class="mode-toggle">
+                <button class="mode-btn active" id="btn-mode-pos" onclick="setMode('pos')">Position</button>
+                <button class="mode-btn" id="btn-mode-speed" onclick="setMode('speed')">Geschwindigkeit</button>
+            </div>
+
+            <!-- Position Control -->
+            <div id="ctrl-pos" class="control-panel">
+                <div class="slider-header">
+                    <span>Zielposition</span>
+                    <span class="slider-val"><span id="lbl-pos">2048</span> / 4096</span>
+                </div>
+                <input type="range" id="slider-pos" min="0" max="4095" value="2048" step="1"
+                       oninput="updatePos(this.value)">
+                <div class="slider-ticks"><span>0</span><span>1024</span><span>2048</span><span>3072</span><span>4095</span></div>
+
+                <div class="quick-pos">
+                    <button onclick="quickPos(0)">0°</button>
+                    <button onclick="quickPos(1024)">90°</button>
+                    <button onclick="quickPos(2048)">180°</button>
+                    <button onclick="quickPos(3072)">270°</button>
+                </div>
+            </div>
+
+            <!-- Speed Control -->
+            <div id="ctrl-speed" class="control-panel" style="display:none;">
+                <div class="slider-header">
+                    <span>Geschwindigkeit</span>
+                    <span class="slider-val"><span id="lbl-spd">0</span> Hz</span>
+                </div>
+                <input type="range" id="slider-speed" min="-10000" max="10000" value="0" step="50"
+                       oninput="updateSpeed(this.value)" onmouseup="snapZero()" ontouchend="snapZero()">
+                <div class="slider-ticks"><span>-10k</span><span>-5k</span><span>0</span><span>+5k</span><span>+10k</span></div>
+            </div>
+
+            <!-- Microstep Select -->
+            <div class="select-wrap">
+                <label>Microstepping</label>
+                <select id="sel-microstep" onchange="setMicrostep(this.value)">
+                    <option value="0">Full Step (200)</option>
+                    <option value="1">1/2 (400)</option>
+                    <option value="2">1/4 (800)</option>
+                    <option value="3">1/8 (1600)</option>
+                    <option value="4" selected>1/16 (3200)</option>
+                    <option value="5">1/32 (6400)</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- ── PID TUNING CARD ── -->
+        <section class="card card-pid" id="card-pid">
+            <div class="card-header">
+                <h2>⚙️ PID Tuning</h2>
+                <button class="btn-small" onclick="sendPID()">ANWENDEN</button>
+            </div>
+            <div class="pid-grid">
+                <div class="pid-param">
+                    <label>Kp</label>
+                    <input type="number" id="pid-kp" value="2.0" step="0.1" min="0">
+                </div>
+                <div class="pid-param">
+                    <label>Ki</label>
+                    <input type="number" id="pid-ki" value="0.1" step="0.01" min="0">
+                </div>
+                <div class="pid-param">
+                    <label>Kd</label>
+                    <input type="number" id="pid-kd" value="0.05" step="0.01" min="0">
+                </div>
+            </div>
+            <div class="pid-presets">
+                <button onclick="setPIDPreset(1.0,0.0,0.0)">P-only</button>
+                <button onclick="setPIDPreset(2.0,0.1,0.05)">Default</button>
+                <button onclick="setPIDPreset(4.0,0.5,0.2)">Aggressiv</button>
+                <button onclick="setPIDPreset(1.0,0.05,0.5)">Smooth</button>
+            </div>
+        </section>
+
+        <!-- ── TTL BUS ID CARD ── -->
+        <section class="card card-ttl" id="card-ttl">
+            <div class="card-header">
+                <h2>🔌 Feetech TTL-Bus</h2>
+            </div>
+            <div class="ttl-layout">
+                <div class="ttl-id-circle">
+                    <span class="ttl-id-val" id="ttl-id">–</span>
+                    <span class="ttl-id-label">BUS ID</span>
+                </div>
+                <div class="ttl-controls">
+                    <div class="ttl-row">
+                        <input type="number" id="ttl-new-id" min="1" max="253" value="1" placeholder="1–253">
+                        <button class="btn-accent" onclick="setMotorId()">SETZEN</button>
+                        <button class="btn-ghost" onclick="readMotorId()">LESEN</button>
+                    </div>
+                    <div class="ttl-status-line">
+                        <div class="ttl-dot" id="ttl-dot"></div>
+                        <span id="ttl-status">Keine ID abgerufen</span>
+                    </div>
+                    <p class="ttl-info">STS/SCS Protokoll · ID 1–253 · ID 254 = Broadcast<br>Änderung wird im EEPROM gespeichert.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── AUTO-SENSE CARD ── -->
+        <section class="card card-autosense card-full" id="card-autosense">
+            <div class="card-header">
+                <h2>🔍 Auto-Sense Motor Profiling</h2>
+                <button class="btn-accent" id="btn-cal" onclick="runAutoSense()">START SCAN</button>
+            </div>
+            <div class="autosense-body">
+                <div class="cal-progress-ring">
+                    <svg viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="42" class="gauge-bg"/>
+                        <circle cx="50" cy="50" r="42" class="gauge-fill" id="cal-ring"
+                                stroke-dasharray="263.9" stroke-dashoffset="263.9"/>
+                    </svg>
+                    <span class="cal-pct" id="cal-pct">0%</span>
+                </div>
+                <div class="cal-info">
+                    <p id="cal-status">Bereit für Motor-Check.<br><span class="dim">Findet den physikalischen Abreißpunkt des Motors.</span></p>
+                    <div id="cal-result" class="cal-result" style="display:none;">
+                        ✓ LIMIT: <span id="res-hz">0</span> Hz · Empfohlen: <span id="res-mode">1/16</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── EMERGENCY / POWER ── -->
+        <button id="btn-power" class="power-button power-off" onclick="togglePower()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                <path d="M12 2v8"/><path d="M17.66 6.34A8 8 0 1 1 6.34 6.34"/>
+            </svg>
+            <span id="power-label">MOTOR AKTIVIEREN</span>
+        </button>
+
+    </main>
+
+    <!-- ═══ FOOTER ═══ -->
+    <footer>
+        <span>SmartServoStepperV2 · ESP32-C3 + TMC2209 + AS5600 · Feetech STS/SCS Emulation</span>
+        <a href="https://github.com/pfeifferandreas1985-create/SmartServoStepperV2" target="_blank">GitHub ↗</a>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

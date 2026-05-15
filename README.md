@@ -10,6 +10,7 @@ Ein ESP32-C3-basiertes Closed-Loop-Servosystem. Der ESP32 kompensiert die Einsch
 ## Dokumentation
 
 Die vollständigen Schaltpläne, BOM und Verdrahtungstabellen für die Platinenfertigung findest du im Ordner `docs`.
+- [TMC2209 UART Guide (WICHTIG)](./software/TMC2209_UART_GUIDE.md) - **Lösung für UART-Verbindungsprobleme.**
 - [01_PCB_Wiring_Schematic.md](./docs/01_PCB_Wiring_Schematic.md) - Der komplette Blueprint zur Platinenerstellung.
 
 ## 🚀 Software (Firmware)
