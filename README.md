@@ -1,34 +1,41 @@
-# Smart Servo Stepper V2
+# 🦾 SmartServoStepperV2
 
-Ein ESP32-C3-basiertes Closed-Loop-Servosystem. Der ESP32 kompensiert die Einschränkungen des Schrittmotors (Schrittverluste, Resonanzen) durch eine hochfrequente Regelstrecke und emuliert dabei ein Feetech (STS/SCS) Servo am seriellen Bus.
+A high-performance Smart Stepper Servo based on the ESP32-C3 Super Mini, TMC2209 driver, and AS5600 magnetic encoder.
 
-**Neuerungen in V2:**
-- **Microcontroller:** ESP32-C3 Super Mini (Kompakter, Single-Core, extrem zuverlässig)
-- **Motortreiber:** TMC2209 im UART-Modus (Flüsterleise, Sensorless Homing, Software-Stromregelung)
-- **Hardening:** Vollständige Industrie-Schutzbeschaltung (I2C Pull-Ups, Boot-Safe Pull-Ups, Bus-Kurzschlussschutz, Filterkondensatoren)
+## 🚀 Key Features (v2.9.2 Stable)
+- **Closed-Loop Position Control:** Real-time PID regulation using AS5600 feedback.
+- **Dual Communication:** Hybrid WiFi (FritzBox Station Mode + Fallback Access Point).
+- **Web Dashboard:** Interactive HTML/JS GUI with real-time telemetry (RPS, Angle, Error).
+- **UART Integration:** High-level velocity control via TMC2209 UART registers.
 
-## Dokumentation
+## 📌 Hardware Configuration
+| Component | ESP32-C3 GPIO | Function |
+| :--- | :--- | :--- |
+| UART RX | 5 | Data from TMC2209 |
+| UART TX | 6 | Data to TMC2209 |
+| ENABLE | 3 | Driver Stage Control |
+| I2C SDA | 0 | AS5600 Data |
+| I2C SCL | 10 | AS5600 Clock |
+| Status LED| 8 | System Heartbeat |
 
-Die vollständigen Schaltpläne, BOM und Verdrahtungstabellen für die Platinenfertigung findest du im Ordner `docs`.
-- [TMC2209 UART Guide (WICHTIG)](./software/TMC2209_UART_GUIDE.md) - **Lösung für UART-Verbindungsprobleme.**
-- [01_PCB_Wiring_Schematic.md](./docs/01_PCB_Wiring_Schematic.md) - Der komplette Blueprint zur Platinenerstellung.
+## 📦 Software Setup
+1. **Arduino IDE Settings:**
+   - Board: `ESP32C3 Dev Module`
+   - USB CDC On Boot: **ENABLED** (Required for Serial Monitor)
+   - Flash Mode: **DIO**
+2. **Libraries Required:**
+   - `TMCStepper`
+   - `ArduinoJson (v7)`
+   - `WebSocketsServer`
+   - `AS5600`
+3. **Usage:**
+   - Upload `SmartServoStepperV2.ino`.
+   - Access the dashboard at `192.168.178.78` (FritzBox) or `192.168.4.1` (AP).
 
-## 🚀 Software (Firmware)
+## 🛠 Stability Fixes
+- **Startup Delay:** A 3-second delay in `setup()` ensures the USB-CDC port enumerates correctly.
+- **Pin Mapping:** Re-routed signals away from sensitive strap pins (GPIO 9) to ensure reliable boots.
+- **Encoder Filtering:** 20ms RPS window to prevent aliasing at high speeds.
 
-Die Firmware befindet sich im Ordner `software/SmartServoStepperV2`. 
-- **Plattform:** Arduino IDE (ESP32 Core)
-- **Features:** 
-  - AS5600 Encoder-Anbindung (I2C)
-  - TMC2209 Konfiguration & Steuerung (UART)
-  - Feetech Servo Protokoll Emulation
-  - Closed-Loop PID Regelung
-
-**Installation:**
-1. Installiere den [ESP32 Core](https://github.com/espressif/arduino-esp32) in der Arduino IDE.
-2. Installiere die Bibliotheken: `TMCStepper`, `AS5600`, `PID`.
-3. Öffne `SmartServoStepperV2.ino` und lade es auf den ESP32-C3 Super Mini hoch.
-
-## 🛠 Hardware
-
-Das KiCad-Projekt befindet sich im Ordner `hardware/SmartServoStepperV2`.
-- Nutze die [01_PCB_Wiring_Schematic.md](./docs/01_PCB_Wiring_Schematic.md) als Referenz für die Verdrahtung.
+---
+*Maintained by pfeifferandreas1985*
