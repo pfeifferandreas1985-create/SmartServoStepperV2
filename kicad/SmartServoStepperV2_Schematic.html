@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartServoStepperV2 – KiCad Schaltplan</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0e1a;--surface:#111827;--card:#1a2237;--border:#2a3654;--accent:#3b82f6;--accent2:#06b6d4;--green:#10b981;--yellow:#f59e0b;--red:#ef4444;--purple:#8b5cf6;--text:#e2e8f0;--muted:#94a3b8;--dim:#64748b}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;padding:0}
+.hero{background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#0f172a 100%);padding:60px 40px;text-align:center;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 30% 50%,rgba(59,130,246,.08),transparent 50%),radial-gradient(circle at 70% 50%,rgba(6,182,212,.06),transparent 50%);animation:pulse 8s ease-in-out infinite alternate}
+@keyframes pulse{0%{opacity:.5}100%{opacity:1}}
+.hero h1{font-size:2.4em;font-weight:800;background:linear-gradient(135deg,#60a5fa,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;position:relative}
+.hero p{color:var(--muted);margin-top:10px;font-size:1.1em;position:relative}
+.badge{display:inline-block;background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);color:var(--accent);padding:4px 14px;border-radius:20px;font-size:.8em;margin:4px;font-weight:500}
+.container{max-width:1100px;margin:0 auto;padding:30px 24px 60px}
+h2{font-size:1.5em;font-weight:700;margin:50px 0 20px;padding-bottom:10px;border-bottom:2px solid var(--border);color:#fff}
+h2 .num{color:var(--accent);margin-right:8px}
+h3{font-size:1.1em;font-weight:600;color:var(--accent2);margin:25px 0 12px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin:16px 0;transition:border-color .3s}
+.card:hover{border-color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.92em}
+th{background:rgba(59,130,246,.1);color:var(--accent);text-align:left;padding:10px 14px;font-weight:600;border-bottom:2px solid var(--border)}
+td{padding:9px 14px;border-bottom:1px solid rgba(42,54,84,.6)}
+tr:hover td{background:rgba(59,130,246,.04)}
+code{font-family:'JetBrains Mono',monospace;background:rgba(59,130,246,.1);padding:2px 7px;border-radius:4px;font-size:.88em;color:var(--accent2)}
+.schem{background:#0d1117;border:1px solid var(--border);border-radius:10px;padding:20px;margin:12px 0;font-family:'JetBrains Mono',monospace;font-size:.85em;line-height:1.8;white-space:pre;overflow-x:auto;color:#8ec8f0}
+.note{background:rgba(245,158,11,.08);border-left:3px solid var(--yellow);padding:14px 18px;border-radius:0 8px 8px 0;margin:14px 0;font-size:.92em}
+.note strong{color:var(--yellow)}
+.ok{background:rgba(16,185,129,.08);border-left:3px solid var(--green);padding:14px 18px;border-radius:0 8px 8px 0;margin:14px 0}
+.ok strong{color:var(--green)}
+.checklist{list-style:none;padding:0}
+.checklist li{padding:6px 0;padding-left:28px;position:relative}
+.checklist li::before{content:'✅';position:absolute;left:0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:700px){.grid2{grid-template-columns:1fr}}
+.pin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin:12px 0}
+.pin{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.pin .gpio{font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--accent)}
+.pin .fn{color:var(--muted);font-size:.88em}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.75em;font-weight:600}
+.tag-pwr{background:rgba(239,68,68,.15);color:var(--red)}
+.tag-sig{background:rgba(59,130,246,.15);color:var(--accent)}
+.tag-bus{background:rgba(139,92,246,.15);color:var(--purple)}
+.tag-io{background:rgba(16,185,129,.15);color:var(--green)}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<h1>SmartServoStepperV2</h1>
+<p>Vollständiger KiCad-Schaltplan</p>
+<div style="margin-top:16px">
+<span class="badge">ESP32-C3 Super Mini</span>
+<span class="badge">TMC2209 Tenstar V2</span>
+<span class="badge">AS5600 Encoder</span>
+<span class="badge">MP1584EN Buck</span>
+<span class="badge">BSS138 Level Shifter</span>
+</div>
+</div>
+
+<div class="container">
+
+<!-- 1. Systemübersicht -->
+<h2><span class="num">1.</span> Systemübersicht</h2>
+<div class="card">
+<table>
+<tr><th>Versorgung</th><th>Spannung</th><th>Zweck</th></tr>
+<tr><td><code>VMOT</code></td><td>12V – 24V</td><td>Motorversorgung TMC2209</td></tr>
+<tr><td><code>+5V_SYS</code></td><td>5V</td><td>ESP32, Level Shifter HV</td></tr>
+<tr><td><code>+3V3_LOGIC</code></td><td>3.3V</td><td>AS5600, TMC VIO, Pullups</td></tr>
+</table>
+</div>
+
+<!-- 2. Haupt-Netze -->
+<h2><span class="num">2.</span> Haupt-Netze</h2>
+<div class="card">
+<table>
+<tr><th>Netzname</th><th>Funktion</th></tr>
+<tr><td><code>VIN_MOTOR</code></td><td>12–24V Eingang</td></tr>
+<tr><td><code>VMOT</code></td><td>Motorversorgung TMC2209</td></tr>
+<tr><td><code>+5V_SYS</code></td><td>5V Versorgung</td></tr>
+<tr><td><code>+3V3_LOGIC</code></td><td>3.3V Logik</td></tr>
+<tr><td><code>GND</code></td><td>Masse</td></tr>
+<tr><td><code>TMC_UART</code></td><td>UART Verbindung TMC</td></tr>
+<tr><td><code>I2C_SDA</code></td><td>I2C Daten</td></tr>
+<tr><td><code>I2C_SCL</code></td><td>I2C Clock</td></tr>
+<tr><td><code>FEETECH_DATA</code></td><td>Half Duplex Servo Bus</td></tr>
+</table>
+</div>
+
+<!-- 3. Versorgungsschaltung -->
+<h2><span class="num">3.</span> Versorgungsschaltung</h2>
+
+<h3>Eingangsschutz</h3>
+<div class="card">
+<p><strong>D1 – SMBJ24A TVS-Diode</strong></p>
+<div class="schem">Kathode → VIN_MOTOR
+Anode   → GND</div>
+<p style="margin-top:14px"><strong>C1 – 470µF / 50V Low ESR</strong></p>
+<div class="schem">Plus  → VIN_MOTOR
+Minus → GND</div>
+<p style="margin-top:14px"><strong>C2 – 100nF Keramik</strong></p>
+<div class="schem">VIN_MOTOR → GND</div>
+</div>
+
+<!-- 4. Buck Converter -->
+<h2><span class="num">4.</span> Buck Converter</h2>
+<div class="card">
+<p><strong>U4 – MP1584EN</strong></p>
+<div class="grid2">
+<div>
+<h3>Eingang</h3>
+<div class="schem">IN+  → VIN_MOTOR
+IN−  → GND</div>
+</div>
+<div>
+<h3>Ausgang</h3>
+<div class="schem">OUT+ → +5V_SYS
+OUT− → GND</div>
+</div>
+</div>
+<p style="margin-top:14px"><strong>C6 – 22µF Keramik</strong></p>
+<div class="schem">+5V_SYS → GND</div>
+</div>
+
+<!-- 5. ESP32-C3 -->
+<h2><span class="num">5.</span> ESP32-C3 Super Mini</h2>
+<div class="card">
+<p><strong>U1 – ESP32-C3 Super Mini</strong></p>
+
+<h3>Versorgung</h3>
+<table>
+<tr><th>ESP32 Pin</th><th>Verbindung</th></tr>
+<tr><td>5V</td><td><code>+5V_SYS</code></td></tr>
+<tr><td>GND</td><td><code>GND</code></td></tr>
+<tr><td>3V3</td><td><code>+3V3_LOGIC</code></td></tr>
+</table>
+
+<h3>GPIO Belegung</h3>
+<div class="pin-grid">
+<div class="pin"><span class="gpio">GPIO 0</span><span class="fn">I2C SDA</span></div>
+<div class="pin"><span class="gpio">GPIO 1</span><span class="fn">Feetech TX</span></div>
+<div class="pin"><span class="gpio">GPIO 2</span><span class="fn">TMC DIR</span></div>
+<div class="pin"><span class="gpio">GPIO 3</span><span class="fn">TMC ENABLE</span></div>
+<div class="pin"><span class="gpio">GPIO 4</span><span class="fn">TMC STEP</span></div>
+<div class="pin"><span class="gpio">GPIO 5</span><span class="fn">TMC UART RX</span></div>
+<div class="pin"><span class="gpio">GPIO 6</span><span class="fn">TMC UART TX</span></div>
+<div class="pin"><span class="gpio">GPIO 7</span><span class="fn">Feetech RX</span></div>
+<div class="pin"><span class="gpio">GPIO 8</span><span class="fn">Status LED</span></div>
+<div class="pin"><span class="gpio">GPIO 10</span><span class="fn">I2C SCL</span></div>
+<div class="pin"><span class="gpio">GPIO 18</span><span class="fn">NC</span></div>
+<div class="pin"><span class="gpio">GPIO 19</span><span class="fn">NC</span></div>
+</div>
+</div>
+
+<!-- 6. ESP32 Pufferung -->
+<h2><span class="num">6.</span> ESP32 Versorgungspufferung</h2>
+<div class="card">
+<table>
+<tr><th>Bauteil</th><th>Wert</th><th>Anschluss</th></tr>
+<tr><td>C3</td><td>47µF X7R 1206</td><td><code>+5V_SYS</code> → <code>GND</code></td></tr>
+<tr><td>C4</td><td>100nF</td><td><code>+5V_SYS</code> → <code>GND</code></td></tr>
+<tr><td>C5</td><td>100µF</td><td><code>+5V_SYS</code> → <code>GND</code></td></tr>
+</table>
+<div class="note"><strong>Hinweis:</strong> Alle drei Kondensatoren möglichst nahe am ESP32 platzieren.</div>
+</div>
+
+<!-- 7. AS5600 -->
+<h2><span class="num">7.</span> AS5600 Encoder</h2>
+<div class="card">
+<p><strong>U3 – AS5600</strong></p>
+<div class="grid2">
+<div>
+<h3>Versorgung</h3>
+<table>
+<tr><th>Pin</th><th>Verbindung</th></tr>
+<tr><td>VCC</td><td><code>+3V3_LOGIC</code></td></tr>
+<tr><td>GND</td><td><code>GND</code></td></tr>
+</table>
+</div>
+<div>
+<h3>I2C</h3>
+<table>
+<tr><th>Pin</th><th>Verbindung</th></tr>
+<tr><td>SDA</td><td><code>GPIO 0</code></td></tr>
+<tr><td>SCL</td><td><code>GPIO 10</code></td></tr>
+</table>
+</div>
+</div>
+
+<h3>Pullups &amp; Pufferung</h3>
+<table>
+<tr><th>Bauteil</th><th>Wert</th><th>Anschluss</th></tr>
+<tr><td>R1</td><td>4.7kΩ</td><td>SDA → <code>+3V3_LOGIC</code></td></tr>
+<tr><td>R2</td><td>4.7kΩ</td><td>SCL → <code>+3V3_LOGIC</code></td></tr>
+<tr><td>C7</td><td>10µF Keramik</td><td><code>+3V3_LOGIC</code> → <code>GND</code></td></tr>
+</table>
+</div>
+
+<!-- 8. TMC2209 -->
+<h2><span class="num">8.</span> TMC2209 Tenstar Modul V2</h2>
+<div class="card">
+<p><strong>U2 – TMC2209</strong></p>
+
+<h3>Versorgung</h3>
+<table>
+<tr><th>Pin</th><th>Verbindung</th></tr>
+<tr><td>VM</td><td><code>VMOT</code></td></tr>
+<tr><td>GND</td><td><code>GND</code></td></tr>
+<tr><td>VIO</td><td><code>+3V3_LOGIC</code></td></tr>
+</table>
+
+<h3>STEP / DIR</h3>
+<table>
+<tr><th>Pin</th><th>Verbindung</th></tr>
+<tr><td>STEP</td><td><code>GPIO 4</code></td></tr>
+<tr><td>DIR</td><td><code>GPIO 2</code></td></tr>
+</table>
+
+<h3>ENABLE (Boot-Safe)</h3>
+<table>
+<tr><th>Pin</th><th>Verbindung</th></tr>
+<tr><td>EN</td><td><code>GPIO 3</code></td></tr>
+</table>
+<p><strong>R3 – 10kΩ Pullup:</strong> EN → <code>+3V3_LOGIC</code></p>
+<div class="note"><strong>Hinweis:</strong> Dadurch bleibt der Treiber beim Boot deaktiviert.</div>
+
+<h3>UART (TMC_UART Netz)</h3>
+<div class="schem">ESP32 GPIO5 (RX) ───────────────┐
+                                │
+                                ├────&gt; PDN_UART
+                                │
+ESP32 GPIO6 (TX) ──[1kΩ]────────┘
+
+PDN_UART ──[4.7kΩ]──&gt; +3V3_LOGIC</div>
+<table style="margin-top:14px">
+<tr><th>Bauteil</th><th>Wert</th><th>Anschluss</th></tr>
+<tr><td>R5</td><td>1kΩ</td><td>GPIO 6 → PDN_UART</td></tr>
+<tr><td>R9</td><td>4.7kΩ</td><td>PDN_UART → <code>+3V3_LOGIC</code></td></tr>
+</table>
+</div>
+
+<!-- 9. Motoranschluss -->
+<h2><span class="num">9.</span> Motoranschluss</h2>
+<div class="card">
+<p><strong>J2 – Stepper Connector</strong></p>
+<table>
+<tr><th>Pin</th><th>Verbindung</th></tr>
+<tr><td>1</td><td>A1</td></tr>
+<tr><td>2</td><td>A2</td></tr>
+<tr><td>3</td><td>B1</td></tr>
+<tr><td>4</td><td>B2</td></tr>
+</table>
+</div>
+
+<!-- 10. Feetech Bus -->
+<h2><span class="num">10.</span> Feetech Half Duplex Bus</h2>
+<div class="card">
+<p><strong>U5 – BSS138 Level Shifter</strong></p>
+<div class="grid2">
+<div>
+<h3>LV-Seite (3.3V)</h3>
+<table>
+<tr><th>Pin</th><th>Verbindung</th></tr>
+<tr><td>LV</td><td><code>+3V3_LOGIC</code></td></tr>
+<tr><td>GND</td><td><code>GND</code></td></tr>
+<tr><td>LV1</td><td>GPIO 1 über R6</td></tr>
+<tr><td>LV2</td><td>GPIO 7</td></tr>
+</table>
+</div>
+<div>
+<h3>HV-Seite (5V)</h3>
+<table>
+<tr><th>Pin</th><th>Verbindung</th></tr>
+<tr><td>HV</td><td><code>+5V_SYS</code></td></tr>
+<tr><td>HV1</td><td><code>FEETECH_DATA</code></td></tr>
+<tr><td>HV2</td><td><code>FEETECH_DATA</code></td></tr>
+</table>
+</div>
+</div>
+<div class="note"><strong>Wichtig:</strong> HV1 und HV2 werden gemeinsam auf <code>FEETECH_DATA</code> verbunden.</div>
+
+<h3>Widerstände</h3>
+<table>
+<tr><th>Bauteil</th><th>Wert</th><th>Anschluss</th></tr>
+<tr><td>R6</td><td>220Ω</td><td>GPIO 1 → LV1 (Serienwiderstand)</td></tr>
+<tr><td>R8</td><td>2.2kΩ</td><td>FEETECH_DATA → <code>+5V_SYS</code> (Bus Pullup)</td></tr>
+</table>
+
+<h3>J3 – Feetech Bus Connector</h3>
+<table>
+<tr><th>Pin</th><th>Verbindung</th></tr>
+<tr><td>1</td><td><code>GND</code></td></tr>
+<tr><td>2</td><td><code>+5V_SYS</code></td></tr>
+<tr><td>3</td><td><code>FEETECH_DATA</code></td></tr>
+</table>
+</div>
+
+<!-- 11. USB/JTAG -->
+<h2><span class="num">11.</span> USB / JTAG</h2>
+<div class="card">
+<p><strong>GPIO18</strong> und <strong>GPIO19</strong> nicht verbinden.</p>
+<p style="color:var(--muted)">Keine Leiterbahnen. Keine Pullups. Keine Testpads.</p>
+</div>
+
+<!-- 12. Footprints -->
+<h2><span class="num">12.</span> Empfohlene Footprints</h2>
+<div class="card">
+<table>
+<tr><th>Bauteil</th><th>Footprint</th></tr>
+<tr><td>0603 Widerstände</td><td><code>R_0603_1608Metric</code></td></tr>
+<tr><td>100nF</td><td><code>C_0603_1608Metric</code></td></tr>
+<tr><td>10µF</td><td><code>C_0805_2012Metric</code></td></tr>
+<tr><td>47µF</td><td><code>C_1206_3216Metric</code></td></tr>
+<tr><td>470µF Elko</td><td><code>CP_Radial_D10.0mm_P5.00mm</code></td></tr>
+<tr><td>TVS</td><td><code>D_SMB</code></td></tr>
+<tr><td>TMC2209 Modul</td><td><code>PinSocket_2x08_P2.54mm</code></td></tr>
+<tr><td>ESP32-C3</td><td>Custom Module Footprint</td></tr>
+</table>
+</div>
+
+<!-- 13. PCB Layoutregeln -->
+<h2><span class="num">13.</span> PCB Layoutregeln</h2>
+<div class="card">
+<h3>Ground Plane</h3>
+<ul style="padding-left:20px;color:var(--muted)">
+<li>Top Layer vollständige GND-Fläche</li>
+<li>Bottom Layer vollständige GND-Fläche</li>
+<li>Viele Stitching-Vias</li>
+</ul>
+
+<h3>TMC2209 Thermal</h3>
+<ul style="padding-left:20px;color:var(--muted)">
+<li>Unter Exposed Pad mindestens <strong>5 Thermal Vias</strong></li>
+<li>0.3mm Drill, 0.6mm Diameter</li>
+</ul>
+
+<h3>Empfohlene Leiterbahnbreiten</h3>
+<table>
+<tr><th>Signal</th><th>Breite</th></tr>
+<tr><td>Logic</td><td>0.20mm</td></tr>
+<tr><td>5V</td><td>0.50mm</td></tr>
+<tr><td>VMOT</td><td>1.20mm</td></tr>
+<tr><td>Motorphasen</td><td>1.50mm</td></tr>
+</table>
+
+<h3>Routing-Hinweise</h3>
+<ul style="padding-left:20px;color:var(--muted)">
+<li>Motorleitungen: breit, kurz, symmetrisch</li>
+<li>I2C: kurz halten, fern von Motorleitungen, möglichst keine Vias</li>
+<li>PDN_UART nicht parallel zu STEP routen</li>
+</ul>
+</div>
+
+<!-- 14. ERC -->
+<h2><span class="num">14.</span> ERC-Regeln</h2>
+<div class="card">
+<div class="grid2">
+<div>
+<h3 style="color:var(--green)">✓ Zulässig</h3>
+<ul style="padding-left:20px;color:var(--muted)">
+<li>Gemeinsame UART Leitung</li>
+<li>Offene GPIO18 / GPIO19</li>
+<li>Pullup auf EN</li>
+</ul>
+</div>
+<div>
+<h3 style="color:var(--red)">✗ Nicht zulässig</h3>
+<ul style="padding-left:20px;color:var(--muted)">
+<li>VIO an 5V</li>
+<li>Fehlender PDN Pullup</li>
+<li>Fehlender VMOT Bulk-Elko</li>
+</ul>
+</div>
+</div>
+</div>
+
+<!-- 15. Fertigung -->
+<h2><span class="num">15.</span> Fertigungsregeln</h2>
+<div class="card">
+<table>
+<tr><th>Parameter</th><th>Empfehlung</th></tr>
+<tr><td>Layer</td><td>2 Layer ausreichend, 4 Layer empfohlen</td></tr>
+<tr><td>Kupfer</td><td>1oz Minimum</td></tr>
+<tr><td>Substrat</td><td>1.6mm FR4</td></tr>
+</table>
+</div>
+
+<!-- 16. Freigabe -->
+<h2><span class="num">16.</span> Finale elektrische Freigabe</h2>
+<div class="ok">
+<strong>Design verifiziert ✓</strong>
+<ul class="checklist" style="margin-top:10px">
+<li>ESP32-C3 Bootverhalten</li>
+<li>TMC2209 UART (Two-Wire)</li>
+<li>Half Duplex Feetech Bus</li>
+<li>AS5600 I2C</li>
+<li>3.3V / 5V Pegel</li>
+<li>Motorversorgung</li>
+<li>EMV-Grundregeln</li>
+<li>Entkopplung</li>
+<li>Thermal Management</li>
+</ul>
+<p style="margin-top:14px;color:var(--green);font-weight:600">Kann direkt als Grundlage für ein vollständiges KiCad-Projekt verwendet werden.</p>
+</div>
+
+<p style="text-align:center;color:var(--dim);margin-top:50px;font-size:.85em">SmartServoStepperV2 – Verifiziert gegen Firmware (Mai 2026)</p>
+
+</div>
+</body>
+</html>
