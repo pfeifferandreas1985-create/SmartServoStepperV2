@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartServoStepperV2 – Modul-Wiring &amp; Netlist</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0b0f1a;--surface:#111827;--card:#1a2237;--border:#2a3654;--accent:#3b82f6;--cyan:#06b6d4;--green:#10b981;--yellow:#f59e0b;--red:#ef4444;--purple:#8b5cf6;--orange:#f97316;--text:#e2e8f0;--muted:#94a3b8;--dim:#64748b}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+
+/* Hero */
+.hero{background:linear-gradient(135deg,#0f172a,#1e1b4b 50%,#0f172a);padding:56px 40px;text-align:center;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:-50%;width:200%;height:200%;background:radial-gradient(circle at 25% 50%,rgba(59,130,246,.07),transparent 50%),radial-gradient(circle at 75% 50%,rgba(6,182,212,.05),transparent 50%);animation:glow 10s ease-in-out infinite alternate}
+@keyframes glow{0%{opacity:.4}100%{opacity:1}}
+.hero h1{font-size:2.2em;font-weight:800;background:linear-gradient(135deg,#60a5fa,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;position:relative}
+.hero .sub{color:var(--muted);margin-top:8px;font-size:1.05em;position:relative}
+.badge{display:inline-block;background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.25);color:var(--accent);padding:4px 14px;border-radius:20px;font-size:.78em;margin:3px;font-weight:500}
+
+/* Layout */
+.container{max-width:1060px;margin:0 auto;padding:28px 22px 60px}
+h2{font-size:1.45em;font-weight:700;margin:48px 0 18px;padding-bottom:10px;border-bottom:2px solid var(--border);color:#fff}
+h2 .n{color:var(--accent);margin-right:8px}
+h3{font-size:1.05em;font-weight:600;color:var(--cyan);margin:22px 0 10px}
+h4{font-size:.95em;font-weight:600;color:var(--muted);margin:16px 0 8px}
+p,li{font-size:.94em}
+ul{padding-left:22px;margin:8px 0}
+li{margin:4px 0;color:var(--muted)}
+li strong{color:var(--text)}
+
+/* Cards */
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;margin:14px 0;transition:border-color .3s}
+.card:hover{border-color:var(--accent)}
+
+/* Tables */
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:.9em}
+th{background:rgba(59,130,246,.1);color:var(--accent);text-align:left;padding:9px 14px;font-weight:600;border-bottom:2px solid var(--border)}
+td{padding:8px 14px;border-bottom:1px solid rgba(42,54,84,.5)}
+tr:hover td{background:rgba(59,130,246,.03)}
+
+/* Code & Schematics */
+code{font-family:'JetBrains Mono',monospace;background:rgba(59,130,246,.1);padding:2px 6px;border-radius:4px;font-size:.86em;color:var(--cyan)}
+.ascii{background:#0d1117;border:1px solid var(--border);border-radius:10px;padding:18px;margin:12px 0;font-family:'JetBrains Mono',monospace;font-size:.82em;line-height:1.75;white-space:pre;overflow-x:auto;color:#8ec8f0}
+
+/* Alerts */
+.note{background:rgba(245,158,11,.07);border-left:3px solid var(--yellow);padding:13px 16px;border-radius:0 8px 8px 0;margin:12px 0;font-size:.9em}
+.note strong{color:var(--yellow)}
+.info{background:rgba(59,130,246,.06);border-left:3px solid var(--accent);padding:13px 16px;border-radius:0 8px 8px 0;margin:12px 0;font-size:.9em}
+.info strong{color:var(--accent)}
+.ok{background:rgba(16,185,129,.07);border-left:3px solid var(--green);padding:13px 16px;border-radius:0 8px 8px 0;margin:12px 0;font-size:.9em}
+.ok strong{color:var(--green)}
+
+/* Net badges */
+.net{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.82em;font-weight:600;padding:3px 10px;border-radius:6px;margin:2px 4px 2px 0}
+.net-pwr{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.25)}
+.net-logic{background:rgba(16,185,129,.12);color:var(--green);border:1px solid rgba(16,185,129,.25)}
+.net-sig{background:rgba(59,130,246,.12);color:var(--accent);border:1px solid rgba(59,130,246,.25)}
+.net-bus{background:rgba(139,92,246,.12);color:var(--purple);border:1px solid rgba(139,92,246,.25)}
+.net-gnd{background:rgba(148,163,184,.1);color:var(--muted);border:1px solid rgba(148,163,184,.2)}
+
+/* Grid */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:700px){.grid2{grid-template-columns:1fr}}
+
+/* Net list */
+.netlist{list-style:none;padding:0;margin:8px 0}
+.netlist li{padding:5px 0 5px 24px;position:relative;color:var(--muted);font-size:.9em}
+.netlist li::before{content:'●';position:absolute;left:4px;color:var(--cyan);font-size:.7em;top:9px}
+
+/* Footer */
+.footer{text-align:center;color:var(--dim);margin-top:50px;font-size:.82em;padding:20px}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<h1>SmartServoStepperV2</h1>
+<p class="sub">Modul-Pinouts · Stromlaufplan · Point-to-Point Netlist</p>
+<div style="margin-top:14px">
+<span class="badge">ESP32-C3 Super Mini</span>
+<span class="badge">Tenstar TMC2209 V2</span>
+<span class="badge">AS5600 Encoder</span>
+<span class="badge">BSS138 Level Shifter</span>
+<span class="badge">MP1584EN Buck</span>
+</div>
+</div>
+
+<div class="container">
+
+<!-- ═══ 1. Modul-Pinouts ═══ -->
+<h2><span class="n">1.</span> Modul-Pinouts &amp; interne Besonderheiten</h2>
+
+<div class="card">
+<h3>ESP32-C3 Super Mini</h3>
+<p>Das Modul speist sich über den <strong>5V Pin</strong> (der interne Regler erzeugt daraus die 3.3V, die am <code>3V3</code> Pin für externe Sensorik abgegriffen werden können).</p>
+</div>
+
+<div class="card">
+<h3>Tenstar TMC2209 V2 Module (SilentStepStick-Format)</h3>
+<div class="note">
+<strong>Wichtig bei Tenstar V2:</strong> Der Pin <code>PDN_UART</code> liegt standardmäßig auf dem Pin, der bei klassischen Treibern (wie A4988) als INDEX oder PDN beschriftet ist (meistens der 4. Pin von oben auf der linken Seite, direkt unter SP oder EN).
+</div>
+<ul>
+<li><strong>VIO / VM:</strong> VIO ist die Logikspannung (3.3V) und VM die Motorspannung (12V–24V).</li>
+<li><strong>DIAG:</strong> Kann unbeschaltet bleiben (wird für StallGuard/sensorloses Homing genutzt).</li>
+</ul>
+</div>
+
+<!-- ═══ 2. Stromlaufplan ═══ -->
+<h2><span class="n">2.</span> Modul-zu-Modul Stromlaufplan</h2>
+
+<!-- Block A: Power Grid -->
+<h3>Block A: Power Grid (Stromversorgung)</h3>
+
+<div class="card">
+<h4>VMOT Eingang (12–24V)</h4>
+<div class="ascii">[ NETZTEIL 12V-24V ]
+   │
+   ├──( + )───┬─── [ SMBJ24A TVS-Diode ] ───( GND )
+   │          ├─── [ C2: 100nF Keramik ] ───( GND )
+   │          ├───► [ MP1584EN INPUT (IN+) ]
+   │          │
+   │          └───► [ Tenstar TMC2209 - Pin: VM ]
+   │                    │
+   │                    └─── [ C1: 470µF Elko ] ───( GND )  <span style="color:#f59e0b">*Direkt am Modul-Pin!</span>
+   │
+   └──( - )───► Zentraler GND-Knoten</div>
+</div>
+
+<div class="card">
+<h4>5V Systemversorgung</h4>
+<div class="ascii">[ MP1584EN OUTPUT (OUT+) ] (5V_SYS)
+   │
+   ├───┬─── [ C6: 22µF Keramik ] ───( GND )
+   │   │
+   │   ├───► [ ESP32-C3 Super Mini - Pin: 5V ]
+   │   │         │
+   │   │         ├─── [ C5: 100µF Elko ] ───( GND )
+   │   │         ├─── [ C3: 47µF Keramik ] ───( GND )
+   │   │         └─── [ C4: 100nF Keramik ] ───( GND )
+   │   │
+   │   └───► Feetech-Bus (VCC) &amp; [ R8: 2.2kΩ Pull-Up ]</div>
+</div>
+
+<div class="card">
+<h4>3.3V Logic Rail</h4>
+<div class="ascii">[ ESP32-C3 Super Mini - Pin: 3V3 ] (3V3_LOGIC)
+   │
+   ├───► [ Tenstar TMC2209 - Pin: VIO ]
+   ├───► [ AS5600 - Pin: VDD ] ───┬─── [ C7: 10µF Keramik ] ───( GND )
+   ├───► BSS138 Level Shifter (Gate 1 &amp; Gate 2)
+   └───► Pull-Up-Widerstände (R1, R2, R3, R9)</div>
+</div>
+
+<!-- Block B: Modul-Verbindungen -->
+<h3>Block B: Spezifische Modul-Verbindungen</h3>
+
+<div class="card">
+<h4>1. TMC2209 UART Eindraht-Bus (TMC_UART_NODE)</h4>
+<div class="info"><strong>Info:</strong> Da du das Tenstar-Modul nutzt, verbinden wir die Pins über die Schutzwiderstände direkt mit dem UART-Pin des Moduls.</div>
+<div class="ascii">ESP32-C3 Pin: GPIO 5 (RX) ──────────────────────────┬───► [ Tenstar TMC2209 - Pin: PDN_UART ]
+                                                    │
+ESP32-C3 Pin: GPIO 6 (TX) ─── [ R5: 1 kΩ Serie ] ───┤
+                                                    │
+3V3_LOGIC ────────────────── [ R9: 4.7 kΩ Pull-Up ] ┘</div>
+</div>
+
+<div class="card">
+<h4>2. Feetech Bus (Level Shifter mit BSS138)</h4>
+<div class="ascii">[ 3V3_LOGIC ] ───┬──────────────────────────────┐
+                 │                              │
+               Gate 1                         Gate 2
+                 │                              │
+GPIO 1 ── [ R6: 220Ω ] ── Source 1            Source 2 ─── ESP32-C3 Pin: GPIO 7
+                                                │
+               Drain 1 ─────────────────────── Drain 2
+                                   │
+                                   ├─── [ R8: 2.2 kΩ Pull-Up ] ─── [ 5V_SYS ]
+                                   │
+                                   └───► [ FEETECH BUS - PIN: DATA ]</div>
+</div>
+
+<div class="card">
+<h4>3. Motor-Treiber Signale (Steuerung)</h4>
+<div class="ascii">ESP32-C3 Pin: GPIO 2 ───────────────────────────────► [ Tenstar TMC2209 - Pin: DIR ]
+ESP32-C3 Pin: GPIO 4 ───────────────────────────────► [ Tenstar TMC2209 - Pin: STEP ]
+
+ESP32-C3 Pin: GPIO 3 ───┬───────────────────────────► [ Tenstar TMC2209 - Pin: EN ]
+                        │
+                    [ R3: 10 kΩ Pull-Up ] ───► [ 3V3_LOGIC ]</div>
+</div>
+
+<!-- ═══ 3. Netlist ═══ -->
+<h2><span class="n">3.</span> Vollständige Point-to-Point Netzliste</h2>
+<p style="color:var(--muted);margin-bottom:16px">Diese Netlist zeigt exakt, welche Pins der Module auf der Platine miteinander verbunden werden müssen.</p>
+
+<div class="card">
+<h4><span class="net net-pwr">5V_SYS</span></h4>
+<ul class="netlist">
+<li>MP1584EN (OUT+)</li>
+<li>C6 (Pluspol)</li>
+<li>ESP32-C3 Modul (Pin: 5V)</li>
+<li>C5 (Elko Pluspol)</li>
+<li>C3 (Pin 1)</li>
+<li>C4 (Pin 1)</li>
+<li>Widerstand R8 (Pin 1)</li>
+<li>Feetech Bus-Stecker (Pin: VCC)</li>
+</ul>
+</div>
+
+<div class="card">
+<h4><span class="net net-logic">3V3_LOGIC</span></h4>
+<ul class="netlist">
+<li>ESP32-C3 Modul (Pin: 3V3)</li>
+<li>Tenstar TMC2209 Modul (Pin: VIO)</li>
+<li>AS5600 Sensor (Pin: VDD)</li>
+<li>C7 (Pin 1)</li>
+<li>Widerstand R1 (Pin 1)</li>
+<li>Widerstand R2 (Pin 1)</li>
+<li>Widerstand R3 (Pin 1)</li>
+<li>Widerstand R9 (Pin 1)</li>
+<li>BSS138 MOSFET (Gate 1 und Gate 2)</li>
+</ul>
+</div>
+
+<div class="card">
+<h4><span class="net net-gnd">GND</span></h4>
+<p style="color:var(--muted);font-size:.9em">Masseverbindung für absolut alles: Netzteil (−), TVS-Diode (Anode), C1(−), C2(−), C3(−), C4(−), C5(−), C6(−), C7(−), MP1584EN (GND), ESP32-C3 Modul (GND), Tenstar TMC2209 Modul (GND), AS5600 (GND), Feetech-Stecker (GND).</p>
+</div>
+
+<div class="card">
+<h4><span class="net net-sig">TMC_UART_NODE</span></h4>
+<ul class="netlist">
+<li>ESP32-C3 Modul (Pin: GPIO 5)</li>
+<li>Widerstand R5 (Pin 2)</li>
+<li>Widerstand R9 (Pin 2)</li>
+<li>Tenstar TMC2209 Modul (Pin: PDN_UART)</li>
+</ul>
+</div>
+
+<div class="card">
+<h4><span class="net net-bus">FT_5V_BUS</span></h4>
+<ul class="netlist">
+<li>BSS138 (Drain 1)</li>
+<li>BSS138 (Drain 2)</li>
+<li>Widerstand R8 (Pin 2)</li>
+<li>Feetech Bus-Stecker (Pin: DATA)</li>
+</ul>
+</div>
+
+<!-- ═══ 4. Layout-Hinweise ═══ -->
+<h2><span class="n">4.</span> Wichtige Vereinfachung für dein PCB-Layout</h2>
+
+<div class="card">
+<p style="margin-bottom:12px">Da du <strong>fertige Module</strong> nutzt, reduziert sich dein Layout-Aufwand drastisch:</p>
+<div class="grid2">
+<div class="ok">
+<strong>Thermal Management</strong>
+<p style="margin-top:6px;color:var(--muted);font-size:.9em">Da du das Tenstar-Modul fertig zukaufst, musst du dich <em>nicht</em> um die Thermal Vias unter dem IC kümmern – das hat Tenstar bereits erledigt. Du musst nur sicherstellen, dass Luft an das Modul kommt (ggf. kleiner Kühlkörper aufkleben).</p>
+</div>
+<div class="note">
+<strong>Kondensatoren-Vorteil</strong>
+<p style="margin-top:6px;color:var(--muted);font-size:.9em">Die Kondensatoren C3, C4, C5 für den ESP32 sowie C1 und C2 für den TMC2209 musst du trotzdem auf deiner Hauptplatine einplanen, und zwar <strong>so nah wie möglich</strong> an den Stiftleisten, wo die Module eingesteckt werden.</p>
+</div>
+</div>
+</div>
+
+<div class="footer">
+SmartServoStepperV2 – Modul-Wiring &amp; Netlist · Verifiziert gegen Firmware (Mai 2026)
+</div>
+
+</div>
+</body>
+</html>
