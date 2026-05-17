@@ -5,8 +5,8 @@
 #define CONFIG_H
 
 // --- TMC2209 PINOUT ---
-#define PIN_TMC_RX      5   // UART RX (Connect via 1k Resistor to PDN_UART)
-#define PIN_TMC_TX      6   // UART TX (Direct to PDN_UART)
+#define PIN_TMC_RX      5   // UART RX (Direct to PDN_UART)
+#define PIN_TMC_TX      6   // UART TX (via 1k Resistor to PDN_UART)
 #define PIN_EN          3   // ENABLE (Active LOW)
 #define PIN_STEP        4   // STEP (Optional, using UART VACTUAL for primary move)
 #define PIN_DIR         2   // DIR (Optional)
