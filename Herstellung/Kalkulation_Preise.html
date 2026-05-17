@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartServoStepperV2 – Herstellungskosten & Preiskalkulation</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: hsl(222, 47%, 6%);
+  --surface: hsl(222, 40%, 11%);
+  --card: hsl(222, 38%, 15%);
+  --border: hsl(222, 30%, 22%);
+  --accent: hsl(217, 91%, 60%);
+  --china-green: hsl(150, 84%, 40%);
+  --de-blue: hsl(217, 91%, 60%);
+  --amber: hsl(38, 92%, 50%);
+  --red: hsl(0, 84%, 60%);
+  --text: hsl(210, 38%, 95%);
+  --muted: hsl(215, 20%, 65%);
+  --dim: hsl(215, 12%, 45%);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  padding-bottom: 80px;
+}
+
+/* Header */
+.hero {
+  background: linear-gradient(135deg, hsl(222, 50%, 8%) 0%, hsl(224, 45%, 12%) 100%);
+  padding: 60px 20px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.08) 0%, transparent 60%),
+              radial-gradient(circle at 70% 70%, rgba(16, 185, 129, 0.06) 0%, transparent 60%);
+  animation: rotateGlow 15s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes rotateGlow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.hero h1 {
+  font-size: 2.5em;
+  font-weight: 800;
+  background: linear-gradient(135deg, hsl(217, 91%, 75%), hsl(150, 84%, 60%));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 10px;
+}
+
+.hero p {
+  color: var(--muted);
+  font-size: 1.1em;
+}
+
+/* Container */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 30px 20px;
+}
+
+/* Tabs */
+.tabs-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.tabs-wrapper {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 4px;
+  border-radius: 30px;
+  display: inline-flex;
+  position: relative;
+}
+
+.tab-btn {
+  padding: 10px 24px;
+  border-radius: 25px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.95em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tab-btn.active {
+  color: #fff;
+}
+
+.tab-indicator {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  height: calc(100% - 8px);
+  width: calc(50% - 4px);
+  background: linear-gradient(135deg, var(--accent), hsl(217, 91%, 50%));
+  border-radius: 25px;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+}
+
+/* Interactive Calculator section */
+.calc-card {
+  background: linear-gradient(135deg, var(--surface) 0%, var(--card) 100%);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 30px;
+  margin-bottom: 40px;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.calc-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 30px;
+}
+
+@media (max-width: 850px) {
+  .calc-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.slider-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.slider-group h3 {
+  font-size: 1.2em;
+  font-weight: 700;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.slider-label {
+  color: var(--muted);
+  font-size: 0.9em;
+  margin-bottom: 20px;
+}
+
+.slider-control {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  position: relative;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 8px;
+  background: var(--border);
+  border-radius: 5px;
+  outline: none;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 3px solid var(--surface);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+  transition: all 0.2s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.8);
+}
+
+.slider-ticks {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 5px;
+  margin-top: 10px;
+}
+
+.tick {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85em;
+  color: var(--dim);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.tick.active {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.result-display {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.result-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.result-label {
+  font-size: 0.95em;
+  color: var(--muted);
+}
+
+.result-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.3em;
+  font-weight: 700;
+  color: #fff;
+}
+
+.result-value.highlight-china {
+  color: var(--china-green);
+  text-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+}
+
+.result-value.highlight-de {
+  color: var(--de-blue);
+  text-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+}
+
+.result-value.highlight-diff {
+  color: var(--amber);
+}
+
+/* Tab Panels */
+.tab-panel {
+  display: none;
+  animation: fadeIn 0.4s ease;
+}
+
+.tab-panel.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10deg); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Heading section */
+h2 {
+  font-size: 1.6em;
+  font-weight: 700;
+  margin: 45px 0 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+h2 span.num {
+  color: var(--accent);
+}
+
+/* Table styling */
+.table-wrapper {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 15px 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.95em;
+}
+
+th {
+  background: rgba(255, 255, 255, 0.02);
+  padding: 16px 20px;
+  font-weight: 600;
+  border-bottom: 2px solid var(--border);
+  color: var(--muted);
+}
+
+td {
+  padding: 14px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tr.total-row {
+  background: rgba(255, 255, 255, 0.01);
+  font-weight: 700;
+}
+
+tr.total-row td {
+  color: #fff;
+  border-top: 2px solid var(--border);
+  font-size: 1.05em;
+}
+
+.total-china {
+  color: var(--china-green) !important;
+}
+
+.total-de {
+  color: var(--de-blue) !important;
+}
+
+/* Budget Cards Grid */
+.budget-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.budget-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.budget-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--border);
+  transition: background 0.3s ease;
+}
+
+.budget-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent);
+}
+
+.budget-card.b10x:hover::after { background: var(--accent); }
+.budget-card.b100x:hover::after { background: var(--china-green); }
+.budget-card.b1000x:hover::after { background: var(--amber); }
+
+.budget-card h3 {
+  font-size: 1.25em;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.budget-card h3 span.tag {
+  font-size: 0.65em;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.sourcing-block {
+  margin: 12px 0;
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.sourcing-title {
+  font-size: 0.85em;
+  font-weight: 600;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.china-title { color: var(--china-green); }
+.de-title { color: var(--de-blue); }
+
+.sourcing-price {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.25em;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.sourcing-note {
+  font-size: 0.82em;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* Warnings and Alerts */
+.info-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 30px;
+}
+
+.alert-card {
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.alert-card.tip {
+  background: rgba(16, 185, 129, 0.05);
+  border: 1px solid rgba(16, 185, 129, 0.15);
+  border-left: 4px solid var(--china-green);
+}
+
+.alert-card.important {
+  background: rgba(59, 130, 246, 0.05);
+  border: 1px solid rgba(59, 130, 246, 0.15);
+  border-left: 4px solid var(--de-blue);
+}
+
+.alert-card.warning {
+  background: rgba(245, 158, 11, 0.05);
+  border: 1px solid rgba(245, 158, 11, 0.15);
+  border-left: 4px solid var(--amber);
+}
+
+.alert-icon {
+  font-size: 1.5em;
+  line-height: 1;
+}
+
+.alert-body h4 {
+  font-size: 1.05em;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: #fff;
+}
+
+.alert-body p {
+  font-size: 0.9em;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.footer {
+  text-align: center;
+  color: var(--dim);
+  margin-top: 60px;
+  font-size: 0.85em;
+  border-top: 1px solid var(--border);
+  padding-top: 25px;
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>SmartServoStepperV2</h1>
+  <p>Herstellungskosten &amp; Preiskalkulations-Kalkulator</p>
+</div>
+
+<div class="container">
+
+  <!-- Interactive Calculator Section -->
+  <div class="calc-card">
+    <div class="calc-grid">
+      <div class="slider-group">
+        <h3>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent);"><line x1="4" y1="9" x2="20" y2="9"></line><line x1="4" y1="15" x2="20" y2="15"></line><line x1="10" y1="3" x2="8" y2="21"></line><line x1="16" y1="3" x2="14" y2="21"></line></svg>
+          Interaktive Mengenstaffel
+        </h3>
+        <p class="slider-label">Wähle deine Projektmenge aus, um die geschätzten Herstellkosten direkt zu vergleichen:</p>
+        
+        <div class="slider-control">
+          <input type="range" id="quantityRange" min="0" max="2" value="0" step="1">
+        </div>
+        
+        <div class="slider-ticks">
+          <span class="tick active" id="tick-0" onclick="setSlider(0)">10 Stück</span>
+          <span class="tick" id="tick-1" onclick="setSlider(1)">100 Stück</span>
+          <span class="tick" id="tick-2" onclick="setSlider(2)">1000 Stück</span>
+        </div>
+      </div>
+      
+      <div class="result-display">
+        <div class="result-row">
+          <span class="result-label">China-Bezug gesamt</span>
+          <span class="result-value highlight-china" id="calcChina">~85,00 €</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">DE-Bezug gesamt</span>
+          <span class="result-value highlight-de" id="calcDe">~220,00 €</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Ersparnis (China)</span>
+          <span class="result-value highlight-diff" id="calcDiff">~135,00 € (61%)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sourcing comparison Switcher -->
+  <div class="tabs-container">
+    <div class="tabs-wrapper">
+      <div class="tab-indicator" id="tabIndicator"></div>
+      <button class="tab-btn active" id="btnChina" onclick="switchSourcing('china')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+        China-Bezug
+      </button>
+      <button class="tab-btn" id="btnGermany" onclick="switchSourcing('germany')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
+        Deutschland-Bezug
+      </button>
+    </div>
+  </div>
+
+  <!-- Panel: China Sourcing -->
+  <div class="tab-panel active" id="panelChina">
+    <h2><span class="num">1.</span> Einzelkomponenten-Preise (China Sourcing)</h2>
+    <p style="color:var(--muted); margin-bottom:10px;">Bezug aus China (Aliexpress / LCSC / JLCPCB) – Alle Werte verstehen sich als Richtwerte pro Stück.</p>
+    
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Komponente</th>
+            <th>Stückpreis bei 10x</th>
+            <th>Stückpreis bei 100x</th>
+            <th>Stückpreis bei 1000x</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>ESP32-C3 Super Mini</td>
+            <td>~2,50 €</td>
+            <td>~1,80 €</td>
+            <td>~1,30 €</td>
+          </tr>
+          <tr>
+            <td>Tenstar TMC2209 V2</td>
+            <td>~2,20 €</td>
+            <td>~1,60 €</td>
+            <td>~1,10 €</td>
+          </tr>
+          <tr>
+            <td>MP1584EN Buck Modul</td>
+            <td>~0,80 €</td>
+            <td>~0,50 €</td>
+            <td>~0,35 €</td>
+          </tr>
+          <tr>
+            <td>BSS138 Level Shifter Mosfets</td>
+            <td>~0,10 €</td>
+            <td>~0,03 €</td>
+            <td>~0,01 €</td>
+          </tr>
+          <tr>
+            <td>Passiva &amp; Schutz (Widerstände, Kondensatoren, TVS, Stecker)</td>
+            <td>~0,60 € (Set)</td>
+            <td>~0,25 €</td>
+            <td>~0,08 €</td>
+          </tr>
+          <tr>
+            <td>Leiterplatte (PCB) (JLCPCB)</td>
+            <td>~1,50 €</td>
+            <td>~0,40 €</td>
+            <td>~0,15 €</td>
+          </tr>
+          <tr class="total-row">
+            <td>Gesamtkosten pro Stück (China)</td>
+            <td class="total-china">~7,70 €</td>
+            <td class="total-china">~4,58 €</td>
+            <td class="total-china">~2,99 €</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Panel: Germany Sourcing -->
+  <div class="tab-panel" id="panelGermany">
+    <h2><span class="num">1.</span> Einzelkomponenten-Preise (Deutschland Sourcing)</h2>
+    <p style="color:var(--muted); margin-bottom:10px;">Bezug aus Deutschland (Amazon / Reichelt / Conrad) – Schnelle Lieferung, höhere Logistikkosten.</p>
+    
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Komponente</th>
+            <th>Stückpreis bei 10x</th>
+            <th>Stückpreis bei 100x</th>
+            <th>Stückpreis bei 1000x</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>ESP32-C3 Super Mini</td>
+            <td>~6,00 €</td>
+            <td>~4,50 €</td>
+            <td>~3,50 €</td>
+          </tr>
+          <tr>
+            <td>Tenstar TMC2209 V2</td>
+            <td>~5,50 €</td>
+            <td>~4,00 €</td>
+            <td>~3,00 €</td>
+          </tr>
+          <tr>
+            <td>MP1584EN Buck Modul</td>
+            <td>~2,50 €</td>
+            <td>~1,80 €</td>
+            <td>~1,20 €</td>
+          </tr>
+          <tr>
+            <td>BSS138 Level Shifter Mosfets</td>
+            <td>~0,40 €</td>
+            <td>~0,15 €</td>
+            <td>~0,08 €</td>
+          </tr>
+          <tr>
+            <td>Passiva &amp; Schutz (Widerstände, Kondensatoren, TVS, Stecker)</td>
+            <td>~1,50 € (Set)</td>
+            <td>~0,60 €</td>
+            <td>~0,25 €</td>
+          </tr>
+          <tr>
+            <td>Leiterplatte (PCB) (DE-Express/EU)</td>
+            <td>~4,50 €</td>
+            <td>~1,50 €</td>
+            <td>~0,75 €</td>
+          </tr>
+          <tr class="total-row">
+            <td>Gesamtkosten pro Stück (Deutschland)</td>
+            <td class="total-de">~20,40 €</td>
+            <td class="total-de">~12,55 €</td>
+            <td class="total-de">~8,78 €</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Sourcing Levels Budget -->
+  <h2><span class="num">2.</span> Gesamtkosten nach Projekt-Staffelung</h2>
+  <p style="color:var(--muted);">Prognostizierte Gesamt-Budgets inklusive durchschnittlicher Lieferkosten und Zollabwicklung.</p>
+
+  <div class="budget-grid">
+    <!-- Card: 10x -->
+    <div class="budget-card b10x">
+      <h3>
+        Prototyping Staffel
+        <span class="tag">10x Einheiten</span>
+      </h3>
+      
+      <div class="sourcing-block">
+        <div class="sourcing-title china-title">
+          <span>China-Bezug (Aliexpress)</span>
+        </div>
+        <div class="sourcing-price">~85 € - 100 €</div>
+        <div class="sourcing-note">PCBs kosten in China für 5–10 Stück pauschal nur ca. 2–5 $ (zzgl. Versand). Module im Mindest-Satz.</div>
+      </div>
+      
+      <div class="sourcing-block">
+        <div class="sourcing-title de-title">
+          <span>Deutschland-Bezug</span>
+        </div>
+        <div class="sourcing-price">~220 € - 250 €</div>
+        <div class="sourcing-note">Bezug über Amazon (24h Express) in kleineren Mengen. Perfekt für schnelles Modul-Swapping am Labortisch.</div>
+      </div>
+    </div>
+
+    <!-- Card: 100x -->
+    <div class="budget-card b100x">
+      <h3>
+        Kleinserie
+        <span class="tag">100x Einheiten</span>
+      </h3>
+      
+      <div class="sourcing-block">
+        <div class="sourcing-title china-title">
+          <span>China-Bezug (LCSC)</span>
+        </div>
+        <div class="sourcing-price">~450 € - 500 €</div>
+        <div class="sourcing-note">Erste signifikante Staffel-Vorteile greifen. Transportkosten relativieren sich.</div>
+      </div>
+      
+      <div class="sourcing-block">
+        <div class="sourcing-title de-title">
+          <span>Deutschland-Bezug</span>
+        </div>
+        <div class="sourcing-price">~1.250 € - 1.400 €</div>
+        <div class="sourcing-note">Amazon zu teuer. Einkauf zwingend über Großhändler (Rutronik / Bürklin) erforderlich, um diesen Schnitt zu halten.</div>
+      </div>
+    </div>
+
+    <!-- Card: 1000x -->
+    <div class="budget-card b1000x">
+      <h3>
+        Industriell
+        <span class="tag">1000x Einheiten</span>
+      </h3>
+      
+      <div class="sourcing-block">
+        <div class="sourcing-title china-title">
+          <span>China PCBA (JLCPCB)</span>
+        </div>
+        <div class="sourcing-price">~2.800 € - 3.200 €</div>
+        <div class="sourcing-note">Kein manueller Modul-Bezug mehr! Direkte Vollbestückung der SMD-Teile im Werk (PCBA). Deutlich günstiger.</div>
+      </div>
+      
+      <div class="sourcing-block">
+        <div class="sourcing-title de-title">
+          <span>Deutschland-Bezug</span>
+        </div>
+        <div class="sourcing-price">~8.500 € - 9.500 €</div>
+        <div class="sourcing-note">Rahmenverträge mit deutschen Großdistributoren. Umfasst reguläre Zollgebühren und EU-Konformitätsprüfungen.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Insider Tips -->
+  <h2><span class="num">3.</span> Insider-Tipps für die Kalkulation</h2>
+  
+  <div class="info-section">
+    <div class="alert-card tip">
+      <div class="alert-icon">💡</div>
+      <div class="alert-body">
+        <h4>Der PCBA-Faktor (Bestückung in China)</h4>
+        <p>Da du Standardmodule (TMC2209 und ESP32) verwendest, schau dir bei einer 100er- oder 1000er-Staffel die Bestückungskosten (PCBA) von chinesischen Werken an. Es ist oft billiger, wenn das Werk die SMD-Kleinteile (Widerstände, Kondensatoren, TVS-Diode, Level Shifter) direkt maschinell auflötet. Du musst dann nur noch die zwei großen Module per Hand einstecken/einlöten.</p>
+      </div>
+    </div>
+    
+    <div class="alert-card important">
+      <div class="alert-icon">⚖️</div>
+      <div class="alert-body">
+        <h4>Zoll &amp; Einfuhrumsatzsteuer</h4>
+        <p>Bei Bezug aus China fallen ab 150 € Warenwert Zollgebühren an (Einfuhrumsatzsteuer von 19 % wird bei Aliexpress meist direkt an der Kasse berechnet). Das ist in den obigen Gesamtkosten grob einkalkuliert.</p>
+      </div>
+    </div>
+    
+    <div class="alert-card warning">
+      <div class="alert-icon">⚠️</div>
+      <div class="alert-body">
+        <h4>Qualitätsrisiko bei China-Modulen</h4>
+        <p>Bei 1000 Stück TMC2209-Modulen aus extrem billigen China-Quellen musst du mit einer Ausschussrate von ca. <strong>2–5 %</strong> rechnen (Treiber, die defekt ankommen oder beim ersten Einschalten sterben). Plane das als Puffer ein.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    SmartServoStepperV2 – Herstellungskosten &amp; Kalkulationsmodul · Stand Mai 2026
+  </div>
+
+</div>
+
+<script>
+  // Interactive Sourcing Switcher
+  function switchSourcing(source) {
+    const indicator = document.getElementById('tabIndicator');
+    const btnChina = document.getElementById('btnChina');
+    const btnGermany = document.getElementById('btnGermany');
+    const panelChina = document.getElementById('panelChina');
+    const panelGermany = document.getElementById('panelGermany');
+    
+    if (source === 'china') {
+      indicator.style.transform = 'translateX(0)';
+      btnChina.classList.add('active');
+      btnGermany.classList.remove('active');
+      panelChina.classList.add('active');
+      panelGermany.classList.remove('active');
+    } else {
+      indicator.style.transform = 'translateX(100%)';
+      btnChina.classList.remove('active');
+      btnGermany.classList.add('active');
+      panelChina.classList.remove('active');
+      panelGermany.classList.add('active');
+    }
+  }
+
+  // Interactive Slider Calculation logic
+  const calcData = [
+    { china: "85 €", de: "220 €", diff: "135 € (61%)" },
+    { china: "450 €", de: "1.250 €", diff: "800 € (64%)" },
+    { china: "2.800 €", de: "8.500 €", diff: "5.700 € (67%)" }
+  ];
+
+  const slider = document.getElementById('quantityRange');
+  const calcChinaVal = document.getElementById('calcChina');
+  const calcDeVal = document.getElementById('calcDe');
+  const calcDiffVal = document.getElementById('calcDiff');
+
+  function updateCalculator(val) {
+    // Update Slider Ticks UI
+    for (let i = 0; i <= 2; i++) {
+      const tick = document.getElementById('tick-' + i);
+      if (i === parseInt(val)) {
+        tick.classList.add('active');
+      } else {
+        tick.classList.remove('active');
+      }
+    }
+    
+    // Update Display Values
+    calcChinaVal.textContent = "~" + calcData[val].china;
+    calcDeVal.textContent = "~" + calcData[val].de;
+    calcDiffVal.textContent = "~" + calcData[val].diff;
+  }
+
+  slider.addEventListener('input', function(e) {
+    updateCalculator(e.target.value);
+  });
+
+  function setSlider(val) {
+    slider.value = val;
+    updateCalculator(val);
+  }
+</script>
+</body>
+</html>
