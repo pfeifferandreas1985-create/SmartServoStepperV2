@@ -32,12 +32,13 @@ body {
     border-bottom: 1px solid var(--border);
 }
 .header-left { display: flex; align-items: center; gap: 0.75rem; flex: 1; justify-content: flex-start; }
-.header-center { display: flex; align-items: center; justify-content: center; text-align: center; flex: 1.5; }
+.header-center { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; flex: 1.5; }
 #app-header h1 { font-size: 1.15rem; font-weight: 700; background: linear-gradient(135deg, #e2e8f0, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .v2-badge { background: linear-gradient(135deg, var(--accent), #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; }
 .subtitle { font-size: 0.7rem; color: var(--text-muted); font-weight: 500; }
 .header-right { display: flex; align-items: center; gap: 1rem; flex: 1; justify-content: flex-end; }
-.brand-title { font-size: 1.35rem; font-weight: 800; background: linear-gradient(135deg, #ffffff, #cbd5e1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 20px rgba(255,255,255,0.05); letter-spacing: 0.5px; }
+.brand-title { font-size: 1.45rem; font-weight: 800; background: linear-gradient(135deg, #ffffff, #cbd5e1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 20px rgba(255,255,255,0.05); letter-spacing: 0.5px; line-height: 1.2; }
+.brand-author { font-size: 0.8rem; color: var(--text-dim); font-weight: 600; letter-spacing: 0.5px; margin-top: 2px; }
 .conn-indicator { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--text-dim); font-weight: 600; }
 .conn-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text-muted); transition: var(--transition); }
 .conn-dot.active { background: var(--green); box-shadow: 0 0 10px var(--green-glow); }
