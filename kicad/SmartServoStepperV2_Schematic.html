@@ -124,6 +124,8 @@ OUT− → GND</div>
 </div>
 <p style="margin-top:14px"><strong>C6 – 22µF Keramik</strong></p>
 <div class="schem">+5V_SYS → GND</div>
+
+<img src="schematics/01_BUCK_5V_MP1584EN.png" alt="MP1584EN Buck Converter 5V Schaltplan" style="max-width:100%; height:auto; border-radius:8px; border:1px solid var(--border); margin-top:16px; display:block;">
 </div>
 
 <!-- 5. ESP32-C3 -->
@@ -154,6 +156,8 @@ OUT− → GND</div>
 <div class="pin"><span class="gpio">GPIO 18</span><span class="fn">NC</span></div>
 <div class="pin"><span class="gpio">GPIO 19</span><span class="fn">NC</span></div>
 </div>
+
+<img src="schematics/02_MCU_ESP32C3.png" alt="MCU ESP32-C3 Super Mini Schaltplan" style="max-width:100%; height:auto; border-radius:8px; border:1px solid var(--border); margin-top:16px; display:block;">
 </div>
 
 <!-- 6. ESP32 Pufferung -->
@@ -198,6 +202,8 @@ OUT− → GND</div>
 <tr><td>R2</td><td>4.7kΩ</td><td>SCL → <code>+3V3_LOGIC</code></td></tr>
 <tr><td>C7</td><td>10µF Keramik</td><td><code>+3V3_LOGIC</code> → <code>GND</code></td></tr>
 </table>
+
+<img src="schematics/03_J2_ENCODER_CONN.png" alt="J2 Encoder Connector Schaltplan" style="max-width:100%; height:auto; border-radius:8px; border:1px solid var(--border); margin-top:16px; display:block;">
 </div>
 
 <!-- 8. TMC2209 -->
@@ -241,6 +247,8 @@ PDN_UART ──[4.7kΩ]──&gt; +3V3_LOGIC</div>
 <tr><td>R5</td><td>1kΩ</td><td>GPIO 6 → PDN_UART</td></tr>
 <tr><td>R9</td><td>4.7kΩ</td><td>PDN_UART → <code>+3V3_LOGIC</code></td></tr>
 </table>
+
+<img src="schematics/05_STEPPER_DRIVER.png" alt="Stepper Driver TMC2209 Schaltplan" style="max-width:100%; height:auto; border-radius:8px; border:1px solid var(--border); margin-top:16px; display:block;">
 </div>
 
 <!-- 9. Motoranschluss -->
@@ -297,6 +305,8 @@ PDN_UART ──[4.7kΩ]──&gt; +3V3_LOGIC</div>
 <tr><td>2</td><td><code>+5V_SYS</code></td></tr>
 <tr><td>3</td><td><code>FEETECH_DATA</code></td></tr>
 </table>
+
+<img src="schematics/04_LEVEL_SHIFTER_FT.png" alt="Feetech-Bus Level Shifter Schaltplan" style="max-width:100%; height:auto; border-radius:8px; border:1px solid var(--border); margin-top:16px; display:block;">
 </div>
 
 <!-- 11. USB/JTAG -->

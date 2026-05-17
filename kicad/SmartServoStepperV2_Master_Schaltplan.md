@@ -18,6 +18,8 @@ Dieses Dokument ist der **Master-Bauplan** für das PCB-Layout, optimiert für d
 - **MCU-Pufferung:** 100 µF Elko + 47 µF Keramik (X7R, 1206) + 100 nF Keramik parallel geschaltet, so nah wie möglich am 5V-Pin des ESP32-C3 Super Mini Moduls.
 - **Bus-Speisung:** Dient als Pull-Up-Quelle für die 5V-Busseite (1-Wire TTL).
 
+![MP1584EN Buck Converter 5V Schaltplan](schematics/01_BUCK_5V_MP1584EN.png)
+
 ### 3.3V Logik (LOGIC) – Signalstromkreis
 
 - **Quelle:** Interner Spannungsregler des ESP32-C3 Super Mini (wird am 3V3-Pin des Moduls abgegriffen).
@@ -49,9 +51,13 @@ Dieser Stecker führt die Spannungsversorgung zu und bindet die Platine an den e
 | **Pin 3** | `I2C_SDA` | I2C Datenleitung, mit 4.7kΩ Pull-Up auf dem Mainboard |
 | **Pin 4** | `I2C_SCL` | I2C Taktleitung, mit 4.7kΩ Pull-Up auf dem Mainboard |
 
+![J2 Encoder Connector Schaltplan](schematics/03_J2_ENCODER_CONN.png)
+
 ---
 
 ## 3. Finales Pin-Mapping (ESP32-C3 Super Mini Modul)
+
+![MCU ESP32-C3 Super Mini Schaltplan](schematics/02_MCU_ESP32C3.png)
 
 | Modul Pin | Funktion | Beschreibung | Hardware-Beschaltung auf dem Mainboard |
 | :--- | :--- | :--- | :--- |
@@ -89,6 +95,8 @@ GPIO 7 (RX) ───────────────────→ BSS138 
                                                [ R8: 2.2kΩ Pull-Up ] → 5V_SYS
 ```
 
+![Feetech-Bus Level Shifter Schaltplan](schematics/04_LEVEL_SHIFTER_FT.png)
+
 ### 4.2 TMC2209 UART (Two-Wire to One-Wire Konfiguration)
 
 ```text
@@ -98,6 +106,8 @@ ESP32-C3 GPIO 6 (TX) ─── [ R5: 1 kΩ Serie ] ────┤
                                                 │
 3V3_LOGIC ────────────── [ R9: 4.7 kΩ Pull-Up ] ┘
 ```
+
+![Stepper Driver TMC2209 Schaltplan](schematics/05_STEPPER_DRIVER.png)
 
 ---
 
