@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Modul-Verdrahtung V1.6 - Smart Servo Stepper V2</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #1a1a2e; color: #e0e0e0; padding: 2rem; max-width: 1000px; margin: 0 auto; }
+        h1 { color: #fff; border-bottom: 2px solid #555; padding-bottom: 0.5rem; }
+        h2 { color: #7ec8e3; margin-top: 3rem; border-bottom: 1px solid #444; padding-bottom: 0.3rem; }
+        table { width: 100%; border-collapse: collapse; margin: 1rem 0 2rem 0; }
+        th { background: #2a2a4a; color: #7ec8e3; text-align: left; padding: 0.6rem; border: 1px solid #444; }
+        td { padding: 0.6rem; border: 1px solid #333; vertical-align: top; }
+        .prot { color: #4ade80; font-weight: bold; }
+        .warn { color: #fbbf24; }
+        .danger { color: #f87171; font-weight: bold; }
+        .note { background: #2a2a3a; border: 1px solid #555; padding: 1rem; margin: 1rem 0; }
+    </style>
+</head>
+<body>
+
+<h1>Modul-Verdrahtung V1.6 (Vollständig)</h1>
+<p>Jeder Pin jedes Moduls. Jeder Widerstand, jeder Kondensator, jede Diode.</p>
+
+<!-- ===== U1: ESP32-C3 SUPER MINI ===== -->
+<h2>U1 – ESP32-C3 Super Mini</h2>
+<table>
+    <tr><th>Pin</th><th>Funktion</th><th>Verbindung zu</th><th>Schutzelement / Passiv</th></tr>
+    <tr><td>5V / VBUS</td><td>Versorgung</td><td>U3 MP1584EN OUT+</td><td class="prot">100µF Elko + 47µF Keramik (X7R 1206) + 100nF → GND</td></tr>
+    <tr><td>GND</td><td>Masse</td><td>System GND</td><td>–</td></tr>
+    <tr><td>3.3V</td><td>Logik-Ausgang</td><td>3.3V Rail (TMC VCC_IO, AS5600 VCC, BSS138 LV)</td><td>–</td></tr>
+    <tr><td>GPIO 1</td><td>Feetech TX</td><td>U4 BSS138 LV-Eingang</td><td>Via Level Shifter (3.3V → 5V)</td></tr>
+    <tr><td>GPIO 2</td><td>DIAG TMC</td><td>U2 TMC2209 DIAG</td><td class="prot">4.7kΩ Pull-Up → 3.3V</td></tr>
+    <tr><td>GPIO 3</td><td>ENABLE</td><td>U2 TMC2209 EN</td><td class="prot">10kΩ Pull-Up → 3.3V (Boot = Motor AUS)</td></tr>
+    <tr><td>GPIO 4</td><td>STEP</td><td>U2 TMC2209 STEP</td><td>Direkt</td></tr>
+    <tr><td>GPIO 5</td><td>DIR</td><td>U2 TMC2209 DIR</td><td>Direkt</td></tr>
+    <tr><td>GPIO 6</td><td>UART TMC</td><td>U2 TMC2209 PDN</td><td class="prot">1kΩ Serienwiderstand</td></tr>
+    <tr><td>GPIO 7</td><td>Feetech RX</td><td>Feetech 5V Bus</td><td class="prot">Spannungsteiler: 4.7kΩ Serie + 10kΩ → GND</td></tr>
+    <tr><td>GPIO 8</td><td>Status-LED</td><td>On-Board LED (blau)</td><td>Intern (Active LOW)</td></tr>
+    <tr><td>GPIO 10</td><td>I2C SDA</td><td>AS5600 SDA</td><td class="prot">4.7kΩ Pull-Up → 3.3V</td></tr>
+    <tr><td>GPIO 20</td><td>I2C SCL</td><td>AS5600 SCL</td><td class="prot">4.7kΩ Pull-Up → 3.3V</td></tr>
+    <tr><td>GPIO 18</td><td>USB D-</td><td class="danger">NICHT BESCHALTEN</td><td>–</td></tr>
+    <tr><td>GPIO 19</td><td>USB D+</td><td class="danger">NICHT BESCHALTEN</td><td>–</td></tr>
+</table>
+
+<!-- ===== U2: TMC2209 SILENTSTEPSTICK ===== -->
+<h2>U2 – TMC2209 SilentStepStick</h2>
+<table>
+    <tr><th>Pin</th><th>Funktion</th><th>Verbindung zu</th><th>Schutzelement / Passiv</th></tr>
+    <tr><td>EN</td><td>Enable (Active LOW)</td><td>U1 ESP GPIO 3</td><td class="prot">10kΩ Pull-Up → 3.3V</td></tr>
+    <tr><td>MS1 (AD0)</td><td>UART Adresse Bit 0</td><td>GND</td><td>Setzt Adresse 0</td></tr>
+    <tr><td>MS2 (AD1)</td><td>UART Adresse Bit 1</td><td>GND</td><td>Setzt Adresse 0</td></tr>
+    <tr><td>PDN</td><td>PDN_UART</td><td>U1 ESP GPIO 6</td><td class="prot">1kΩ Serienwiderstand</td></tr>
+    <tr><td>SPRD</td><td>SpreadCycle Modus</td><td>GND (oder offen)</td><td>–</td></tr>
+    <tr><td>STEP</td><td>Schritt-Impuls</td><td>U1 ESP GPIO 4</td><td>Direkt</td></tr>
+    <tr><td>DIR</td><td>Richtung</td><td>U1 ESP GPIO 5</td><td>Direkt</td></tr>
+    <tr><td>DIAG</td><td>Diagnose (Open-Drain)</td><td>U1 ESP GPIO 2</td><td class="prot">4.7kΩ Pull-Up → 3.3V</td></tr>
+    <tr><td>CLK</td><td>Takt</td><td>–</td><td>Nicht verbinden (interner Oszillator)</td></tr>
+    <tr><td>VCC_IO</td><td>Logik-Versorgung</td><td>3.3V Rail</td><td class="danger">NICHT an 5V! Nur 3.3V!</td></tr>
+    <tr><td>VM</td><td>Motor-Versorgung</td><td>12V–24V Rail</td><td class="prot">470µF/50V Elko (Low-ESR) + SMBJ24A TVS + 100nF Keramik → GND</td></tr>
+    <tr><td>GND (Logik)</td><td>Logik-Masse</td><td>System GND</td><td>–</td></tr>
+    <tr><td>GND (Power)</td><td>Motor-Masse</td><td>System GND</td><td>–</td></tr>
+    <tr><td>M1A</td><td>Spule A+</td><td>Motor Spule A</td><td>–</td></tr>
+    <tr><td>M1B</td><td>Spule A-</td><td>Motor Spule A</td><td>–</td></tr>
+    <tr><td>M2A</td><td>Spule B+</td><td>Motor Spule B</td><td>–</td></tr>
+    <tr><td>M2B</td><td>Spule B-</td><td>Motor Spule B</td><td>–</td></tr>
+</table>
+
+<!-- ===== U3: MP1584EN BUCK CONVERTER ===== -->
+<h2>U3 – MP1584EN Buck Converter (8-Pin Modul)</h2>
+<table>
+    <tr><th>Pin</th><th>Funktion</th><th>Verbindung zu</th><th>Schutzelement / Passiv</th></tr>
+    <tr><td>IN+ (2x)</td><td>Eingang positiv</td><td>12V–24V Rail</td><td>Beide IN+ Pins zusammen auf 12V</td></tr>
+    <tr><td>IN- (2x)</td><td>Eingang negativ</td><td>GND</td><td>Beide IN- Pins zusammen auf GND</td></tr>
+    <tr><td>OUT+ (2x)</td><td>Ausgang positiv (5V)</td><td>5V Rail</td><td class="prot">22µF Keramik am Ausgang</td></tr>
+    <tr><td>OUT- (2x)</td><td>Ausgang negativ</td><td>GND</td><td>Beide OUT- Pins zusammen auf GND</td></tr>
+</table>
+<div class="note">
+    <strong>Hinweis:</strong> Jedes Signal hat 2 physische Pins (8 Pins gesamt). Beide Pins pro Signal müssen zusammen verbunden werden für maximale Stromtragfähigkeit.
+</div>
+
+<!-- ===== U4: BSS138 LEVEL SHIFTER ===== -->
+<h2>U4 – BSS138 Level Shifter (BOB-12009)</h2>
+<table>
+    <tr><th>Pin</th><th>Funktion</th><th>Verbindung zu</th><th>Schutzelement / Passiv</th></tr>
+    <tr><td>LV</td><td>Low-Voltage Versorgung</td><td>3.3V Rail</td><td>–</td></tr>
+    <tr><td>HV</td><td>High-Voltage Versorgung</td><td>5V Rail</td><td>–</td></tr>
+    <tr><td>GND</td><td>Masse</td><td>System GND</td><td>–</td></tr>
+    <tr><td>LV1</td><td>TX Eingang (3.3V Seite)</td><td>U1 ESP GPIO 1</td><td>–</td></tr>
+    <tr><td>HV1</td><td>TX Ausgang (5V Seite)</td><td>Feetech 5V Bus</td><td class="prot">2.2kΩ Pull-Up → 5V (Bus-Terminierung)</td></tr>
+    <tr><td>LV2</td><td>–</td><td>–</td><td>Nicht verwendet (RX geht über Spannungsteiler)</td></tr>
+    <tr><td>HV2</td><td>–</td><td>–</td><td>Nicht verwendet</td></tr>
+    <tr><td>LV3</td><td>–</td><td>–</td><td>Nicht verwendet</td></tr>
+    <tr><td>HV3</td><td>–</td><td>–</td><td>Nicht verwendet</td></tr>
+    <tr><td>LV4</td><td>–</td><td>–</td><td>Nicht verwendet</td></tr>
+    <tr><td>HV4</td><td>–</td><td>–</td><td>Nicht verwendet</td></tr>
+</table>
+
+<!-- ===== AS5600 ENCODER ===== -->
+<h2>AS5600 – Magnet-Encoder</h2>
+<table>
+    <tr><th>Pin</th><th>Funktion</th><th>Verbindung zu</th><th>Schutzelement / Passiv</th></tr>
+    <tr><td>VCC</td><td>Versorgung</td><td>3.3V Rail</td><td class="prot">10µF Keramik → GND (nahe am Sensor)</td></tr>
+    <tr><td>GND</td><td>Masse</td><td>System GND</td><td>–</td></tr>
+    <tr><td>SDA</td><td>I2C Daten</td><td>U1 ESP GPIO 10</td><td class="prot">4.7kΩ Pull-Up → 3.3V</td></tr>
+    <tr><td>SCL</td><td>I2C Takt</td><td>U1 ESP GPIO 20</td><td class="prot">4.7kΩ Pull-Up → 3.3V</td></tr>
+</table>
+
+<!-- ===== FEETECH RX SPANNUNGSTEILER ===== -->
+<h2>Feetech RX – Spannungsteiler (diskret)</h2>
+<table>
+    <tr><th>Bauteil</th><th>Von</th><th>Nach</th><th>Zweck</th></tr>
+    <tr><td class="prot">4.7kΩ (Serie)</td><td>Feetech 5V Bus</td><td>Knoten → ESP GPIO 7</td><td>Strombegrenzung</td></tr>
+    <tr><td class="prot">10kΩ (nach GND)</td><td>Knoten (GPIO 7)</td><td>GND</td><td>Teilt 5V auf ca. 3.4V herunter</td></tr>
+</table>
+<div class="note">
+    <strong>Erklärung:</strong> Der RX-Pfad geht NICHT durch den Level Shifter, sondern direkt über diesen Spannungsteiler vom 5V-Bus zu GPIO 7. Das vermeidet Verzögerungen bei 1 Mbps.
+</div>
+
+<!-- ===== ZUSAMMENFASSUNG SCHUTZELEMENTE ===== -->
+<h2>Übersicht aller Schutzelemente</h2>
+<table>
+    <tr><th>Bauteil</th><th>Wert</th><th>Position</th><th>Zweck</th></tr>
+    <tr><td>R (Pull-Up)</td><td>10kΩ</td><td>GPIO 3 → 3.3V</td><td>Enable Boot-Schutz</td></tr>
+    <tr><td>R (Pull-Up)</td><td>4.7kΩ</td><td>GPIO 2 → 3.3V</td><td>DIAG Open-Drain Pull-Up</td></tr>
+    <tr><td>R (Pull-Up)</td><td>4.7kΩ</td><td>GPIO 10 (SDA) → 3.3V</td><td>I2C Pull-Up</td></tr>
+    <tr><td>R (Pull-Up)</td><td>4.7kΩ</td><td>GPIO 20 (SCL) → 3.3V</td><td>I2C Pull-Up</td></tr>
+    <tr><td>R (Serie)</td><td>1kΩ</td><td>GPIO 6 → TMC PDN</td><td>UART Schutz</td></tr>
+    <tr><td>R (Serie)</td><td>4.7kΩ</td><td>5V Bus → GPIO 7 Knoten</td><td>RX Spannungsteiler</td></tr>
+    <tr><td>R (Teiler)</td><td>10kΩ</td><td>GPIO 7 Knoten → GND</td><td>RX Spannungsteiler</td></tr>
+    <tr><td>R (Pull-Up)</td><td>2.2kΩ</td><td>5V Bus → 5V</td><td>Bus-Terminierung</td></tr>
+    <tr><td>TVS-Diode</td><td>SMBJ24A</td><td>VMOT ↔ GND</td><td>Überspannungsschutz</td></tr>
+    <tr><td>C (Elko)</td><td>470µF / 50V</td><td>VMOT → GND (am TMC VM)</td><td>Motor-Puffer (Low-ESR)</td></tr>
+    <tr><td>C (Keramik)</td><td>100nF</td><td>VMOT → GND</td><td>HF-Filter</td></tr>
+    <tr><td>C (Keramik)</td><td>22µF</td><td>MP1584 OUT+ → GND</td><td>Buck-Ausgangspuffer</td></tr>
+    <tr><td>C (Elko)</td><td>100µF</td><td>ESP 5V → GND</td><td>MCU-Puffer</td></tr>
+    <tr><td>C (Keramik)</td><td>47µF X7R</td><td>ESP 5V → GND</td><td>MCU-Puffer (1206, min. 10V)</td></tr>
+    <tr><td>C (Keramik)</td><td>100nF</td><td>ESP 5V → GND</td><td>MCU HF-Entkopplung</td></tr>
+    <tr><td>C (Keramik)</td><td>10µF</td><td>AS5600 VCC → GND</td><td>Sensor-Puffer</td></tr>
+</table>
+
+</body>
+</html>

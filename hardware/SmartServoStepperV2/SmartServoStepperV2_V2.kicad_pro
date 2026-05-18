@@ -488,7 +488,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "SmartStepperServo.kicad_pro",
+    "filename": "SmartStepperServo_V2.kicad_pro",
     "version": 3
   },
   "net_settings": {
@@ -523,7 +523,7 @@
   "pcbnew": {
     "last_paths": {
       "idf": "",
-      "netlist": "",
+      "netlist": "./",
       "plot": "",
       "specctra_dsn": "",
       "vrml": ""
@@ -643,18 +643,18 @@
     "subpart_id_separator": 0,
     "top_level_sheets": [
       {
-        "filename": "SmartStepperServo.kicad_sch",
-        "name": "SmartStepperServo",
+        "filename": "SmartStepperServo_V2.kicad_sch",
+        "name": "SmartStepperServo_V2",
         "uuid": "c31241a4-fe08-48f6-a6fd-0d157a7c0fab"
       }
     ],
-    "used_designators": "C6,R7,#PWR16-21",
+    "used_designators": "",
     "variants": []
   },
   "sheets": [
     [
       "c31241a4-fe08-48f6-a6fd-0d157a7c0fab",
-      "SmartStepperServo"
+      "SmartStepperServo_V2"
     ]
   ],
   "text_variables": {},

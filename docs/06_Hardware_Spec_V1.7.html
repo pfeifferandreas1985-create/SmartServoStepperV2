@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Servo Stepper V2 - Hardware-Spezifikation V1.7</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --accent-color: #38bdf8;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --text-color: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.05);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            background-image:
+                radial-gradient(circle at 20% 20%, rgba(56, 189, 248, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 40%);
+            color: var(--text-color);
+            line-height: 1.7;
+            padding: 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header { margin-bottom: 3rem; text-align: center; }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .version-badge {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success-color);
+            padding: 0.3rem 1rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            margin-top: 0.5rem;
+        }
+
+        p.intro { font-size: 1rem; color: var(--text-muted); max-width: 800px; margin: 1rem auto 0; }
+
+        section {
+            margin-bottom: 3rem;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            font-size: 1.6rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        h2::before { content: ''; display: block; width: 4px; height: 1.5rem; background: var(--accent-color); border-radius: 2px; }
+
+        h3 { font-size: 1.2rem; margin: 2rem 0 1rem 0; color: var(--text-color); opacity: 0.95; }
+
+        table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; font-size: 0.9rem; }
+        th { text-align: left; padding: 1rem; background: rgba(255, 255, 255, 0.04); color: var(--accent-color); font-weight: 600; border-bottom: 2px solid var(--border-color); }
+        td { padding: 0.9rem 1rem; border-bottom: 1px solid var(--border-color); }
+        tr:hover td { background: rgba(255, 255, 255, 0.02); }
+
+        code { font-family: 'JetBrains Mono', monospace; background: rgba(56, 189, 248, 0.1); color: var(--accent-color); padding: 0.15rem 0.4rem; border-radius: 0.3rem; font-size: 0.85rem; }
+
+        .note { background: rgba(245, 158, 11, 0.08); border-left: 4px solid var(--warning-color); padding: 1.2rem; margin: 1.5rem 0; border-radius: 0 0.5rem 0.5rem 0; color: #fbbf24; }
+        .critical { background: rgba(239, 68, 68, 0.08); border-left: 4px solid var(--danger-color); padding: 1.2rem; margin: 1.5rem 0; border-radius: 0 0.5rem 0.5rem 0; color: #fca5a5; }
+        .success { background: rgba(16, 185, 129, 0.08); border-left: 4px solid var(--success-color); padding: 1.2rem; margin: 1.5rem 0; border-radius: 0 0.5rem 0.5rem 0; color: #6ee7b7; }
+
+        ul { padding-left: 1.5rem; margin-bottom: 1rem; }
+        li { margin-bottom: 0.4rem; }
+
+        footer { text-align: center; margin-top: 4rem; padding-bottom: 2rem; color: var(--text-muted); font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Smart Servo Stepper V2</h1>
+        <p class="intro">Hardware-Spezifikation</p>
+        <div class="version-badge">V1.7 – Final Revision (Approved)</div>
+        <p class="intro">Basiert auf V1.6 mit Rückführung des Feetech-Bus auf die bewährte Half-Duplex-Konfiguration (BSS138 bidirektional, HV1/HV2 gebrückt, 220Ω Schutzwiderstand). Alle anderen Verbesserungen aus V1.6 (Enable-Logik, Pin-Konflikte, DIAG, Power-Schutz) bleiben erhalten.</p>
+    </header>
+
+    <!-- ============================== -->
+    <!-- SECTION 1: POWER GRID          -->
+    <!-- ============================== -->
+    <section id="power">
+        <h2>1. Systemarchitektur &amp; Power Grid</h2>
+        <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Das Design ist auf maximale Stabilität bei hohen Motorlasten und Schutz der MCU ausgelegt.</p>
+
+        <h3>VMOT (12V–24V)</h3>
+        <ul>
+            <li><strong>Schutz:</strong> <code>SMBJ24A</code> TVS-Diode (transiente Überspannungen) + <code>100nF</code> Keramik (HF).</li>
+            <li><strong>Puffer:</strong> <code>470 µF / 50V</code> Elko (Low-ESR) unmittelbar am TMC2209 VM/GND.</li>
+        </ul>
+
+        <h3>5V System (SYS)</h3>
+        <ul>
+            <li><strong>Quelle:</strong> MP1584EN Buck-Converter (Ausgang lokal gepuffert mit <code>22µF</code> Keramik).</li>
+            <li><strong>MCU-Puffer:</strong> <code>100 µF</code> Elko + <code>47 µF</code> Keramik (X7R, 1206) + <code>100 nF</code> direkt am ESP32 5V-Pin.</li>
+        </ul>
+
+        <h3>3.3V Logik (LOGIC)</h3>
+        <ul>
+            <li><strong>VIO TMC2209:</strong> Zwingend mit 3.3V verbinden (nicht 5V!), um Pegel-Kompatibilität zum ESP32 sicherzustellen.</li>
+            <li><strong>Puffer:</strong> <code>10 µF</code> Keramik nahe am AS5600 Sensor.</li>
+        </ul>
+
+        <div class="critical">
+            <strong>Achtung:</strong> VCC_IO des TMC2209 darf niemals mit 5V verbunden werden! Nur 3.3V, sonst brennen die GPIOs des ESP32 durch.
+        </div>
+    </section>
+
+    <!-- ============================== -->
+    <!-- SECTION 2: PIN MAPPING         -->
+    <!-- ============================== -->
+    <section id="pinmap">
+        <h2>2. Finales Pin-Mapping (ESP32-C3 Super Mini)</h2>
+        <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Optimiert zur Vermeidung von Boot-Strap-Konflikten und Sicherstellung der USB-Funktionalität.</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ESP32-C3 Pin</th>
+                    <th>Funktion</th>
+                    <th>Beschreibung</th>
+                    <th>Hardware-Beschaltung</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>GPIO 6</code></td>
+                    <td><strong>UART TMC</strong></td>
+                    <td>UART (Single-Wire) Interface</td>
+                    <td><code>1kΩ</code> Schutzwiderstand in Serie</td>
+                </tr>
+                <tr>
+                    <td><code>GPIO 1</code></td>
+                    <td><strong>Feetech TX</strong></td>
+                    <td>Bus Senden (Half-Duplex)</td>
+                    <td><code>220Ω</code> Serienwiderstand → BSS138 LV1</td>
+                </tr>
+                <tr>
+                    <td><code>GPIO 7</code></td>
+                    <td><strong>Feetech RX</strong></td>
+                    <td>Bus Empfangen (Half-Duplex)</td>
+                    <td>BSS138 LV2 → direkt</td>
+                </tr>
+                <tr>
+                    <td><code>GPIO 2</code></td>
+                    <td><strong>DIAG TMC</strong></td>
+                    <td>StallGuard / Diagnose</td>
+                    <td><code>4.7kΩ</code> Pull-Up gegen 3.3V</td>
+                </tr>
+                <tr>
+                    <td><code>GPIO 3</code></td>
+                    <td><strong>ENABLE</strong></td>
+                    <td>TMC2209 EN (Active LOW)</td>
+                    <td><code>10kΩ</code> Pull-Up gegen 3.3V (Boot = AUS)</td>
+                </tr>
+                <tr>
+                    <td><code>GPIO 10</code></td>
+                    <td><strong>SDA</strong></td>
+                    <td>I2C Daten (AS5600)</td>
+                    <td><code>4.7kΩ</code> Pull-Up gegen 3.3V</td>
+                </tr>
+                <tr>
+                    <td><code>GPIO 20</code></td>
+                    <td><strong>SCL</strong></td>
+                    <td>I2C Takt (AS5600)</td>
+                    <td><code>4.7kΩ</code> Pull-Up gegen 3.3V</td>
+                </tr>
+                <tr>
+                    <td><code>GPIO 4</code></td>
+                    <td><strong>STEP</strong></td>
+                    <td>Schritt-Impuls</td>
+                    <td>Direkt</td>
+                </tr>
+                <tr>
+                    <td><code>GPIO 5</code></td>
+                    <td><strong>DIR</strong></td>
+                    <td>Richtungs-Signal</td>
+                    <td>Direkt</td>
+                </tr>
+                <tr>
+                    <td><code>GPIO 8</code></td>
+                    <td><strong>Status-LED</strong></td>
+                    <td>On-Board LED (Blau)</td>
+                    <td>Intern (Active LOW)</td>
+                </tr>
+                <tr>
+                    <td><code>GPIO 18/19</code></td>
+                    <td><strong>USB / JTAG</strong></td>
+                    <td>D- / D+</td>
+                    <td>Physisch unbeschaltet lassen!</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="note">
+            <strong>Hinweis:</strong> GPIO 0 wird bewusst NICHT verwendet, um Boot-Strap-Konflikte zu vermeiden. STEP und DIR liegen auf GPIO 4 und GPIO 5.
+        </div>
+    </section>
+
+    <!-- ============================== -->
+    <!-- SECTION 3: SCHALTUNGSDETAILS   -->
+    <!-- ============================== -->
+    <section id="details">
+        <h2>3. Spezifische Schaltungsdetails</h2>
+
+        <h3>3.1 ENABLE-Logik (Kritisch)</h3>
+        <p>Um unkontrollierte Motorbewegungen beim Einschalten oder Flashen zu verhindern:</p>
+        <ul>
+            <li><strong>Logik:</strong> Der TMC2209 ist bei <strong>LOW aktiv</strong>. Der <code>10kΩ</code> Pull-Up an GPIO 3 zieht den Pin beim Booten auf HIGH (Disabled).</li>
+            <li><strong>Firmware-Handling:</strong> Erst nach Initialisierung aller Sensoren wird GPIO 3 aktiv auf LOW gezogen.</li>
+        </ul>
+        <div class="critical">
+            <strong>Boot-Sicherheit:</strong> Ohne den 10kΩ Pull-Up könnte der Motor beim Einschalten oder Flashen unkontrolliert anlaufen!
+        </div>
+
+        <h3>3.2 DIAG-Schnittstelle</h3>
+        <ul>
+            <li>Der DIAG-Ausgang ist <strong>Open-Drain</strong>.</li>
+            <li><strong>Anbindung:</strong> Direkt an GPIO 2. Der externe <code>4.7kΩ</code> Pull-Up gegen 3.3V definiert das High-Level.</li>
+            <li>Keine Anbindung an 5V oder GND-Teiler erforderlich.</li>
+        </ul>
+
+        <h3>3.3 Feetech-Bus (Bewährte Half-Duplex Konfiguration)</h3>
+        <p>Beide Kommunikationsrichtungen (TX und RX) laufen über den BSS138 Level Shifter. Auf der 5V-Seite werden HV1 und HV2 zu einer gemeinsamen Datenleitung zusammengeführt. Diese Konfiguration ist im Originalprojekt erprobt und stabil.</p>
+        <ul>
+            <li><strong>TX-Pfad:</strong> <code>GPIO 1</code> → <code>220Ω</code> Serienwiderstand → BSS138 <code>LV1</code> → <code>HV1</code> → Bus.</li>
+            <li><strong>RX-Pfad:</strong> Bus → <code>HV2</code> → BSS138 → <code>LV2</code> → <code>GPIO 7</code>.</li>
+            <li><strong>Brücke:</strong> <code>HV1</code> und <code>HV2</code> werden auf der Platine physisch kurzgeschlossen.</li>
+            <li><strong>Bus-Ausgang:</strong> Die Brücke (HV1+HV2) geht als einzelne Datenleitung zum Servo-Stecker.</li>
+        </ul>
+
+        <div class="success">
+            <strong>Bewährt:</strong> Diese Konfiguration wurde im V1-Prototyp erfolgreich getestet. Der 220Ω Widerstand schützt den ESP32-GPIO und den Level Shifter vor Stromspitzen beim Half-Duplex-Umschalten.
+        </div>
+    </section>
+
+    <!-- ============================== -->
+    <!-- SECTION 4: LAYOUT-HINWEISE     -->
+    <!-- ============================== -->
+    <section id="layout">
+        <h2>4. Layout- &amp; Fertigungshinweise</h2>
+        <ul>
+            <li><strong>Thermal Management:</strong> Großflächige Ground-Planes auf Top- und Bottom-Layer. Unter dem TMC2209 "Exposed Pad" mindestens <strong>5 Thermal Vias</strong> (0.3mm Bohrung) setzen.</li>
+            <li><strong>EMI-Schutz:</strong> I2C-Leitungen (SDA/SCL) so kurz wie möglich halten und räumlich von den Motor-Leitungen (Phasen A/B) trennen.</li>
+            <li><strong>Kondensatoren:</strong> Der <code>47µF</code> Keramik-Kondensator muss ein <strong>X7R-Dielektrikum</strong> besitzen und für mindestens 10V (besser 16V) spezifiziert sein, um den Kapazitätsverlust bei 5V Bias zu minimieren.</li>
+            <li><strong>Mechanik:</strong> Zentrales 6mm Loch für Magnet-Halterung der Motorwelle.</li>
+        </ul>
+    </section>
+
+    <!-- ============================== -->
+    <!-- SECTION 5: ÄNDERUNGSHISTORIE   -->
+    <!-- ============================== -->
+    <section id="changelog">
+        <h2>5. Änderungshistorie</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Von</th>
+                    <th>Nach</th>
+                    <th>Änderung</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>V1.5</td>
+                    <td>V1.6</td>
+                    <td>ENABLE-Logik auf Pull-Up korrigiert (Boot-Sicherheit).</td>
+                </tr>
+                <tr>
+                    <td>V1.5</td>
+                    <td>V1.6</td>
+                    <td>DIAG-Schaltung auf simplen Pull-Up vereinfacht.</td>
+                </tr>
+                <tr>
+                    <td>V1.5</td>
+                    <td>V1.6</td>
+                    <td>Pin-Mapping: STEP/DIR auf GPIO 4/5 verlegt (GPIO 0 Boot-Konflikt).</td>
+                </tr>
+                <tr>
+                    <td>V1.5</td>
+                    <td>V1.6</td>
+                    <td>Pin-Mapping: I2C auf GPIO 10/20 verlegt.</td>
+                </tr>
+                <tr>
+                    <td>V1.6</td>
+                    <td>V1.7</td>
+                    <td>Feetech-Bus: Rückführung auf bewährte Half-Duplex-Konfiguration (BSS138 bidirektional, HV1/HV2 gebrückt, 220Ω Schutzwiderstand). Spannungsteiler-Variante aus V1.6 entfernt.</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <footer>
+        &copy; 2026 Smart Servo Stepper V2 Project | Hardware-Spezifikation V1.7 (Final)
+    </footer>
+
+</body>
+</html>

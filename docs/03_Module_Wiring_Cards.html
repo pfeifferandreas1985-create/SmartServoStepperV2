@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pin-für-Pin Bauplan V2 - Smart Servo Stepper</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.95);
+            --accent-color: #38bdf8;
+            --success-color: #10b981;
+            --text-color: #f1f5f9;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color); padding: 2rem; max-width: 1400px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 3rem; }
+        h1 { font-size: 2.2rem; background: linear-gradient(to right, #38bdf8, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .module-card { background: var(--card-bg); border: 2px solid var(--border-color); padding: 2rem; border-radius: 1.5rem; margin-bottom: 3rem; }
+        h2 { color: var(--accent-color); margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; }
+
+        .pin-table { width: 100%; border-collapse: collapse; }
+        .pin-table th { text-align: left; padding: 1rem; color: var(--accent-color); border-bottom: 2px solid var(--border-color); }
+        .pin-table td { padding: 0.8rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+        .nr { font-weight: 800; color: var(--accent-color); width: 50px; }
+        .label { font-weight: 700; width: 150px; }
+        .target { flex-grow: 1; }
+        .passive { color: var(--success-color); font-weight: 600; }
+        .highlight { background: rgba(56, 189, 248, 0.2); padding: 0.2rem 0.5rem; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Pin-für-Pin Masterplan V2</h1>
+        <p>Exakte physische Reihenfolge für deine Hardware</p>
+    </header>
+
+    <!-- TMC2209 DEFINITIVE -->
+    <div class="module-card">
+        <h2>TMC2209 SilentStepStick (16-Pin Header)</h2>
+        <table class="pin-table">
+            <thead><tr><th>Nr.</th><th>Beschriftung</th><th>Verbindung zu</th><th>Pfad / Passiv-Bauteil</th></tr></thead>
+            <tbody>
+                <tr><td class="nr">1</td><td class="label">EN</td><td>ESP GPIO 3</td><td class="passive">+ R3 (10k) nach 3.3V</td></tr>
+                <tr><td class="nr">2</td><td class="label">MS1</td><td>GND</td><td>(Adressierung UART)</td></tr>
+                <tr><td class="nr">3</td><td class="label">MS2</td><td>GND</td><td>(Adressierung UART)</td></tr>
+                <tr><td class="nr">4</td><td class="label"><span class="highlight">PDN</span></td><td>ESP GPIO 6</td><td class="passive">über R5 (1k Ohm) Serie</td></tr>
+                <tr><td class="nr">5</td><td class="label"><span class="highlight">SPRD</span></td><td>GND</td><td>(SpreadCycle Modus)</td></tr>
+                <tr><td class="nr">6</td><td class="label">STEP</td><td>ESP GPIO 0</td><td>-</td></tr>
+                <tr><td class="nr">7</td><td class="label">DIR</td><td>ESP GPIO 1</td><td>-</td></tr>
+                <tr><td class="nr">8</td><td class="label">VCC_IO</td><td>3.3V Rail</td><td class="passive">+ C4 (100nF) zu GND</td></tr>
+                <tr><td class="nr">9</td><td class="label">GND</td><td>GND</td><td>Logik-Masse</td></tr>
+                <tr><td class="nr">10</td><td class="label">VM</td><td>12V Rail</td><td class="passive">+ C1 (470uF) & C2 (100nF)</td></tr>
+                <tr><td class="nr">11</td><td class="label">GND</td><td>GND</td><td>Motor-Masse</td></tr>
+                <tr><td class="nr">12</td><td class="label">M1A</td><td>Motor Spule A</td><td>-</td></tr>
+                <tr><td class="nr">13</td><td class="label">M1B</td><td>Motor Spule A</td><td>-</td></tr>
+                <tr><td class="nr">14</td><td class="label">M2A</td><td>Motor Spule B</td><td>-</td></tr>
+                <tr><td class="nr">15</td><td class="label">M2B</td><td>Motor Spule B</td><td>-</td></tr>
+                <tr><td class="nr">16</td><td class="label">DIAG</td><td>-</td><td>(Offen lassen)</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- OTHER MODULES SUMMARY -->
+    <div class="module-card">
+        <h2>Level Shifter & Encoder Schnell-Check</h2>
+        <table class="pin-table">
+            <thead><tr><th>Modul</th><th>Pin</th><th>Verbindung zu</th><th>Hinweis</th></tr></thead>
+            <tbody>
+                <tr><td>BSS138</td><td>HV1+HV2</td><td>Servo Data</td><td>Brücke auf Platine!</td></tr>
+                <tr><td>BSS138</td><td>LV1</td><td>ESP GPIO 21</td><td>über R4 (220R) Serie</td></tr>
+                <tr><td>AS5600</td><td>SDA / SCL</td><td>GPIO 4 / 5</td><td>+ R1/R2 (4.7k) Pullups</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>
