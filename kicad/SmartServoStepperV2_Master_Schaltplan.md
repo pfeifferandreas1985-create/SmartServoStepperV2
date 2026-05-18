@@ -64,7 +64,7 @@ Dieser Stecker führt die Spannungsversorgung zu und bindet die Platine an den e
 | **5V** | `5V_SYS` | Moduleingang 5V | MP1584EN Ausgang / Bulk-Kondensatoren (C3, C4, C5) |
 | **3V3** | `3V3_LOGIC` | Modulausgang 3.3V | Speist VIO (TMC), Stecker J2 Pin 1, Level Shifter & Pull-Ups |
 | **GND** | `GND` | Systemmasse | Verbunden mit der zentralen Massefläche (Ground Plane) |
-| **GPIO 0** | `I2C_SDA` | I2C Daten (AS5600) | R1 (4.7kΩ) Pull-UP gegen 3V3_LOGIC → Stecker J2 Pin 3 |
+| **GPIO 0** | *Unbeschaltet* | Boot-Strap-Pin | **Zwingend offen lassen**, um Boot-Konflikte der MCU zu verhindern! |
 | **GPIO 1** | `FT_TX` | Bus Senden | Über R6 (220Ω) Serienwiderstand → BSS138 Source 1 |
 | **GPIO 2** | `TMC_DIR` | Richtungs-Signal | Direkt an Tenstar TMC2209 Pin: DIR |
 | **GPIO 3** | `TMC_EN` | TMC2209 EN (Active LOW) | R3 (10kΩ) Pull-UP gegen 3V3_LOGIC → Tenstar Pin: EN |
@@ -74,8 +74,9 @@ Dieser Stecker führt die Spannungsversorgung zu und bindet die Platine an den e
 | **GPIO 7** | `FT_RX` | Bus Empfangen | Direkt → BSS138 Source 2 |
 | **GPIO 8** | Status-LED | On-Board LED (Blau) | Modulintern verschaltet (Active LOW) |
 | **GPIO 10** | `I2C_SCL` | I2C Takt (AS5600) | R2 (4.7kΩ) Pull-UP gegen 3V3_LOGIC → Stecker J2 Pin 4 |
-| **GPIO 18** | USB D- | Intern reserviert | **Physisch unbeschaltet lassen!** |
-| **GPIO 19** | USB D+ | Intern reserviert | **Physisch unbeschaltet lassen!** |
+| **GPIO 18** | USB D- | Intern reserviert | **Physisch unbeschaltet lassen!** (Verhindert USB-JTAG Störungen) |
+| **GPIO 19** | USB D+ | Intern reserviert | **Physisch unbeschaltet lassen!** (Verhindert USB-JTAG Störungen) |
+| **GPIO 20** | `I2C_SDA` | I2C Daten (AS5600) | R1 (4.7kΩ) Pull-UP gegen 3V3_LOGIC → Stecker J2 Pin 3 |
 
 ---
 
@@ -147,8 +148,37 @@ ESP32-C3 GPIO 6 (TX) ─── [ R5: 1 kΩ Serie ] ────┤
 
 ## 6. Layout-Hinweise für diese Revision
 
-- **Leistungsführung (VMOT/GND):** Die Leiterbahn von J1 Pin 1 (VMOT) zu TMC2209 VM sowie von J1 Pin 2 (GND) zu TMC2209 GND muss die breiteste Verbindung auf der Platine sein (mindestens 1,2 mm), da hier der volle Motorstrom fließt.
+- **Leistungsführung (VMOT/GND):** Die Leiterbahn von J1 Pin 1 (VMOT) zu TMC2209 VM sowie von J1 Pin 2 (GND) zu TMC2209 GND muss die breiteste Verbindung auf der Platine sein, da hier der volle Motorstrom fließt (siehe Detailtabelle unten).
 
-- **I2C-Leitungen schützen:** Die Leitungen von GPIO 0 und GPIO 10 zum Stecker J2 sollten parallel und nah beieinander geführt werden. Halte sie fern von den Motor-Ausgangsleitungen (Pins 1A, 1B, 2A, 2B des Treibers), um induktive Störungen auf dem I2C-Bus zu vermeiden.
+- **I2C-Leitungen schützen:** Die Leitungen von GPIO 20 und GPIO 10 zum Stecker J2 sollten parallel und nah beieinander geführt werden. Halte sie fern von den Motor-Ausgangsleitungen (Pins 1A, 1B, 2A, 2B des Treibers), um induktive Störungen auf dem I2C-Bus zu vermeiden.
 
 - **Kondensatoren-Platzierung:** C3, C4, C5 gehören im Layout direkt an den 5V-Pin des ESP32-Moduls, nicht an den Ausgang des Buck-Converters. C1 gehört direkt an den VM-Pin des Treiber-Moduls.
+
+---
+
+## 7. Leiterplatten-Designregeln & Leiterbahnbreiten (IPC-2152)
+
+Um eine minimale Erwärmung (max. ΔT = 10°C) bei einer standardmäßigen Kupferauflage von **35 µm (1 oz)** zu gewährleisten, müssen für das PCB-Layout in KiCad die folgenden **Netzklassen (Net Classes)** definiert und angewendet werden.
+
+### 7.1 Spezifikation der Netzklassen für KiCad
+
+| Netzklasse (KiCad Name) | Zugehörige Netze (Net Names) | Max. Strom | Empf. Breite (External) | Empf. Breite (Internal) | Clearance (Abstand) |
+| :--- | :--- | :---: | :---: | :---: | :---: |
+| **Power_High** | `+12V`, `/M1A`, `/M1B`, `/M2A`, `/M2B` | **2,5 A** | **1,0 mm** (~40 mil) | **1,5 mm** (~60 mil) | **0,3 mm** (~12 mil) |
+| **Power_Medium** | `+5V`, `/5V` | **1,0 A** | **0,4 mm** (~16 mil) | **0,6 mm** (~24 mil) | **0,2 mm** (~8 mil) |
+| **Power_Logic** | `+3.3V`, `+3V3` | **0,2 A** | **0,25 mm** (~10 mil) | **0,35 mm** (~14 mil) | **0,2 mm** (~8 mil) |
+| **Signal_Standard** | `/Step`, `/Dir`, `/UART`, `FT_TX`, `FT_RX`, `/Diag` | **< 10 mA**| **0,2 mm** (~8 mil) | **0,2 mm** (~8 mil) | **0,2 mm** (~8 mil) |
+| **Signal_I2C** | `/SDA`, `/SCL` | **< 5 mA** | **0,2 mm** (~8 mil) | **0,2 mm** (~8 mil) | **0,25 mm** (~10 mil) |
+| **Feetech_DATA** | `/TTL_1_Wire` | **0,5 A** | **0,3 mm** (~12 mil) | **0,4 mm** (~16 mil) | **0,25 mm** (~10 mil) |
+
+> [!TIP]
+> **Masseführung (GND):** Verwenden Sie für **GND** keine dünnen Leiterbahnen! Legen Sie auf der Unterseite der Platine (`B.Cu`) eine **durchgehende Kupfer-Massefläche (GND Ground Plane)** an. Alle GND-Pins werden über *Thermal Reliefs* direkt an diese Fläche angebunden. Das minimiert EMI-Störungen, verbessert das thermische Verhalten des TMC2209 massiv und senkt die Impedanz.
+
+### 7.2 Technische Berechnungsbasis (IPC-2152)
+
+*   **Motorstrom-Leitungen (Power_High):** 
+    Bei $2,5\text{ A}$ Stromstärke erfordert die thermische Stabilität eine Mindest-Querschnittsfläche des Kupfers. Bei 35 µm Kupferdicke führt eine **1,0 mm breite Außenleiterbahn** zu einer Erwärmung von unter 10°C über Umgebungstemperatur. 
+*   **Hilfsspannungen (Power_Medium):** 
+    Die 5V-Leitung speist unter anderem den Feetech-Bus. Um Spannungsabfälle bei Busaktivität zu minimieren, wird sie auf **0,4 mm** dimensioniert.
+*   **Signalschutz (Signal_I2C):** 
+    Für I2C-Leitungen (`SDA` / `SCL`) wird ein erhöhter Mindestabstand (Clearance) von **0,25 mm** empfohlen, um kapazitives Übersprechen von den Step/Dir-Leitungen zu verhindern.
